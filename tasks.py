@@ -25,8 +25,8 @@ class PeriodicTask:
 
 
 class Scheduler:
-    def __init__(self, *schedulers: PeriodicTask):
-        self.schedulers = schedulers
+    def __init__(self, *tasks: PeriodicTask):
+        self.tasks = tasks
 
     async def on_startup(self, _):
-        [asyncio.create_task(scheduler.schedule()) for scheduler in self.schedulers]
+        [asyncio.create_task(scheduler.schedule()) for scheduler in self.tasks]
