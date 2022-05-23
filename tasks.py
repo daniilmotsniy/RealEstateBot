@@ -34,5 +34,5 @@ class Scheduler:
             await aioschedule.run_pending()
             await asyncio.sleep(self.SLEEP_TIME)
 
-    async def on_startup(self, _):
+    async def get_periodic_tasks(self, _):
         asyncio.create_task(self.schedule())
