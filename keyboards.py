@@ -10,7 +10,8 @@ class ButtonText:
 class Keyboards:
     start = ReplyKeyboardMarkup(
         [[
-            KeyboardButton(ButtonText.change_cohort),
+            KeyboardButton(ButtonText.change_cohort)
+        ], [
             KeyboardButton(ButtonText.add_object),
             KeyboardButton(ButtonText.jobs),
         ]],
