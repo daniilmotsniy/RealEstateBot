@@ -16,7 +16,7 @@ class PeriodicTask:
 
     async def send_msg(self):
         for chat_id in self.chat_ids:
-            await self.bot.send_message(chat_id, self.text)
+            await self.bot.send_message(chat_id, self.text, disable_notification=True)
 
     def every(self):
         aioschedule.every(interval=self.days).days.at(self.time).do(self.send_msg)
