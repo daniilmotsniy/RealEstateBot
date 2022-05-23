@@ -37,4 +37,4 @@ async def h__jobs(message: types.Message):
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True,
-                           on_startup=scheduler.on_startup)
+                           on_startup=scheduler.get_periodic_tasks)
