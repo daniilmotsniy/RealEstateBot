@@ -23,8 +23,6 @@ class PeriodicTask:
 
 
 class Scheduler:
-    SLEEP_TIME = 1
-
     def __init__(self, *tasks: PeriodicTask):
         self.tasks = tasks
 
@@ -32,7 +30,7 @@ class Scheduler:
         [task.every() for task in self.tasks]
         while True:
             await aioschedule.run_pending()
-            await asyncio.sleep(self.SLEEP_TIME)
+            await asyncio.sleep(aioschedule.idle_seconds())
 
     async def on_startup(self, _):
         asyncio.create_task(self.schedule())
