@@ -3,7 +3,8 @@ from os import getenv
 
 from aiogram import Bot, Dispatcher, executor, types
 
-from keyboards import Keyboards
+from keyboards import Keyboards, ButtonText
+from text_config import add_object_text, jobs_text
 
 API_TOKEN = getenv('BOT_TOKEN')
 
@@ -14,13 +15,18 @@ dp = Dispatcher(bot)
 
 
 @dp.message_handler(commands=['start'])
-async def send_welcome(message: types.Message):
+async def h__start(message: types.Message):
     await message.reply("Hi!\nI'm avezor bot!", reply_markup=Keyboards.start)
 
 
-@dp.message_handler()
-async def echo(message: types.Message):
-    await message.answer(message.text)
+@dp.message_handler(text=ButtonText.add_object)
+async def h__add__object(message: types.Message):
+    await message.reply(add_object_text, reply_markup=Keyboards.start)
+
+
+@dp.message_handler(text=ButtonText.jobs)
+async def h__jobs(message: types.Message):
+    await message.reply(jobs_text, reply_markup=Keyboards.start)
 
 
 if __name__ == '__main__':
