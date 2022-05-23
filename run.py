@@ -4,7 +4,7 @@ from os import getenv
 from aiogram import Bot, Dispatcher, executor, types
 
 from keyboards import Keyboards, ButtonText
-from tasks import TelegramPeriodicTask, Scheduler
+from tasks import Scheduler, PeriodicTask
 from text_config import *
 
 API_TOKEN = getenv('BOT_TOKEN')
@@ -14,7 +14,9 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
-periodic_tasks = TelegramPeriodicTask(Scheduler(bot, '22:00', night_text))
+scheduler = Scheduler(
+    PeriodicTask(bot, '22:00', night_text),
+)
 
 
 @dp.message_handler(commands=['start'])
@@ -34,4 +36,4 @@ async def h__jobs(message: types.Message):
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True,
-                           on_startup=periodic_tasks.on_startup)
+                           on_startup=scheduler.on_startup)

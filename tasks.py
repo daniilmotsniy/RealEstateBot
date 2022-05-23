@@ -3,7 +3,7 @@ import aioschedule
 from aiogram import Bot
 
 
-class Scheduler:
+class PeriodicTask:
     SLEEP_TIME = 1
 
     def __init__(self, bot: Bot, time: str, text: str):
@@ -24,8 +24,8 @@ class Scheduler:
             await self.bot.send_message(chat_id, self.text)
 
 
-class TelegramPeriodicTask:
-    def __init__(self, *schedulers: Scheduler):
+class Scheduler:
+    def __init__(self, *schedulers: PeriodicTask):
         self.schedulers = schedulers
 
     async def on_startup(self, _):
