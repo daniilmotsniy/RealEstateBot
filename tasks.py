@@ -4,18 +4,21 @@ import typing
 import aioschedule
 from aiogram import Bot
 
+from lang import i18n
+
 
 class PeriodicTask:
-    def __init__(self, bot: Bot, days: int, time: str, text: str):
+    def __init__(self, bot: Bot, days: int, time: str, text):
         self.bot = bot
         self.days = days
         self.time = time
         self.text = text
         # FIXME add mongo ids
-        self.chat_ids: typing.List[str] = ['522343041']
+        self.chat_ids: typing.List[tuple[str, str]] = [('608815116', 'ru')]
 
     async def send_msg(self):
-        for chat_id in self.chat_ids:
+        for chat_id, locale in self.chat_ids:
+            i18n.ctx_locale.set(locale)
             await self.bot.send_message(chat_id, self.text, disable_notification=True)
 
     def every(self):

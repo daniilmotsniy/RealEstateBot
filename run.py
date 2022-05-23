@@ -1,38 +1,57 @@
 import logging
 from os import getenv
 
-from aiogram import Bot, Dispatcher, executor, types
+from aiogram import Bot, Dispatcher, executor
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.types import Message
 
-from keyboards import Keyboards, ButtonText
+from keyboards import ButtonText, Keyboards
 from tasks import Scheduler, PeriodicTask
-from text_config import *
+from lang import i18n
 
-API_TOKEN = getenv('BOT_TOKEN')
+if getenv('BOT_DEBUG'):
+    logging.basicConfig(level=logging.DEBUG)
 
-logging.basicConfig(level=logging.INFO)
+bot = Bot(token=getenv('BOT_TOKEN'))
+mem = MemoryStorage()
+dp = Dispatcher(bot, storage=mem)
 
-bot = Bot(token=API_TOKEN)
-dp = Dispatcher(bot)
+dp.middleware.setup(i18n)
+
+_ = __ = i18n.gettext
+___ = i18n.lazy_gettext
 
 scheduler = Scheduler(
-    PeriodicTask(bot, 1, '22:00', night_text),
-    PeriodicTask(bot, 5, '18:00', cohort_text),
+    PeriodicTask(bot, 1, '22:00', ___('nightSpam')),
+    PeriodicTask(bot, 5, '18:00', ___('daySpam')),
 )
 
 
 @dp.message_handler(commands=['start'])
-async def h__start(message: types.Message):
-    await message.reply("Hi!\nI'm Avezor bot!", reply_markup=Keyboards.start)
+async def h__start(msg: Message):
+    await msg.answer("Hi!\nI'm Avezor bot!", reply_markup=Keyboards.start)
 
 
 @dp.message_handler(text=ButtonText.add_object)
-async def h__add__object(message: types.Message):
-    await message.reply(add_object_text, reply_markup=Keyboards.start)
+async def h__add__object(msg: Message):
+    await msg.answer(_('buttonReply_addObject'), reply_markup=Keyboards.start)
 
 
 @dp.message_handler(text=ButtonText.jobs)
-async def h__jobs(message: types.Message):
-    await message.reply(jobs_text, reply_markup=Keyboards.start)
+async def h__jobs(msg: Message):
+    await msg.answer(_('buttonReply_jobs'), reply_markup=Keyboards.start)
+
+
+@dp.message_handler(commands=['lang'])
+async def h__lang(msg: Message, locale: str):
+    await msg.answer(_('Current language: {lang}.').format(lang=locale))
+
+    locale = msg.get_args()
+
+    if await i18n.set_locale(msg.from_user, locale):
+        await msg.answer(_('Changed language to: {lang}.').format(lang=locale), reply_markup=Keyboards.start)
+    else:
+        await msg.answer(_('Language {lang} not found.').format(lang=locale))
 
 
 if __name__ == '__main__':
