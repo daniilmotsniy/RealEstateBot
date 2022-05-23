@@ -15,8 +15,9 @@ bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
 scheduler = Scheduler(
-    PeriodicTask(bot, 1, '22:00', night_text),
-    PeriodicTask(bot, 5, '18:00', cohort_text),
+    PeriodicTask(bot, 1, '21:05', night_text),
+    PeriodicTask(bot, 1, '21:06', night_text),
+    # PeriodicTask(bot, 5, '18:00', cohort_text),
 )
 
 
