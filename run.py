@@ -6,6 +6,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import Message
 
 from keyboards import ButtonText, Keyboards
+from post import Post
 from tasks import Scheduler, PeriodicTask
 from lang import i18n
 
@@ -49,9 +50,22 @@ async def h__lang(msg: Message, locale: str):
     locale = msg.get_args()
 
     if await i18n.set_locale(msg.from_user, locale):
-        await msg.answer(_('Changed language to: {lang}.').format(lang=locale), reply_markup=Keyboards.start)
+        await msg.answer(_('Changed language to: {lang}.').format(lang=locale),
+                         reply_markup=Keyboards.start)
     else:
         await msg.answer(_('Language {lang} not found.').format(lang=locale))
+
+
+@dp.message_handler(commands=['send'])
+async def h__send__post(msg: Message):
+    posts = [Post('123', 'Nice flat', 'https://ireland.apollo.olxcdn.com/v1/fi'
+                                      'les/7qpc41qo4e761-UA/image;s=1000x700',
+                  'Diivska, 40', 'Dnipro obl', 'Dnipro', 'Dnipro',
+                  42, 2, 5, 37000, 'https://www.olx.ua/d/uk/obyavlenie/persha-zdacha-orend'
+                                   'a-2k-novobudovi-vul-shuhevicha-3b-r-n-maydanu-IDOH0ee.html')]
+    for post in posts:
+        await bot.send_photo(msg.chat.id, post.get_photo_url(),
+                             post.get_description(), reply_markup=post.get_buttons())
 
 
 if __name__ == '__main__':

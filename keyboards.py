@@ -7,6 +7,11 @@ class ButtonText:
     jobs = "Вакансии"
 
 
+class InlineButtonText:
+    write = "Написать"
+    more = "Подробнее"
+
+
 class Keyboards:
     start = ReplyKeyboardMarkup(
         [[
