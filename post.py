@@ -4,22 +4,10 @@ from keyboards import InlineButtonText
 from lang import i18n
 
 _ = __ = i18n.gettext
-___ = i18n.lazy_gettext
 
 
 class Post:
     CONTACT_LINK = 'https://t.me/avezor'
-
-    # FIXME multi lang
-    address = _('post_Address')
-    district = 'District'
-    city = 'City'
-    region = 'Region'
-    rooms = 'Rooms'
-    area = 'Area'
-    floor = 'Floor'
-    price = 'Price'
-    id_ = 'ID'
 
     def __init__(self,
                  post_id, name, photo, address,
@@ -44,12 +32,16 @@ class Post:
         return InlineKeyboardMarkup().add(write_btn, more_btn)
 
     def get_description(self):
-        return f'{self._name}\n{self.address}: {self._address}\nDistrict: ' \
-               f'{self._district}\n{self.city}: {self._city}\n' \
-                      f'{self.region}: {self._region}' \
-               f'\n{self.area}: {self._area}\n{self.rooms}: {self._rooms}\n' \
-                      f'{self.floor}: {self._floor}' \
-               f'\n{self.price}: {self._price}\n{self.id_}: {self._post_id}'
+        return f'{self._name}\n' + \
+               _('post_Address') + f': {self._address}\n' + \
+               _('post_District') + f': {self._district}\n' + \
+               _('post_City') + f': {self._city}\n' + \
+               _('post_Region') + f': {self._region}\n' + \
+               _('post_Area') + f': {self._area}\n' + \
+               _('post_Rooms') + f': {self._rooms}\n' + \
+               _('post_Floor') + f': {self._floor}\n' + \
+               _('post_Price') + f': {self._price}\n' + \
+               _('post_ID') + f': {self._post_id}'
 
     def get_photo_url(self):
         return self._photo
