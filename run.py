@@ -58,11 +58,7 @@ async def h__lang(msg: Message, locale: str):
 
 @dp.message_handler(commands=['send'])
 async def h__send__post(msg: Message):
-    posts = [Post('123', 'Nice flat', 'https://ireland.apollo.olxcdn.com/v1/fi'
-                                      'les/7qpc41qo4e761-UA/image;s=1000x700',
-                  'Diivska, 40', 'Dnipro obl', 'Dnipro', 'Dnipro',
-                  42, 2, 5, 37000, 'https://www.olx.ua/d/uk/obyavlenie/persha-zdacha-orend'
-                                   'a-2k-novobudovi-vul-shuhevicha-3b-r-n-maydanu-IDOH0ee.html')]
+    posts = [Post('229500', 'com')]
     for post in posts:
         await bot.send_photo(msg.chat.id, post.get_photo_url(),
                              post.get_description(), reply_markup=post.get_buttons())
