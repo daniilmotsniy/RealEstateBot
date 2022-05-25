@@ -10,6 +10,9 @@ from lang import i18n
 from post import Post
 from tasks import Scheduler, PeriodicTask
 
+# noinspection PyUnresolvedReferences
+import post_filters
+
 logging.basicConfig(level=(logging.WARNING, logging.INFO, logging.DEBUG)[int(getenv('BOT_DEBUG') or 0)])
 
 _ = __ = i18n.gettext
