@@ -15,7 +15,7 @@ class LocaleMiddleware(I18nMiddleware):
 
         if user:
             mem = Dispatcher.get_current().storage
-            bucket = await mem.get_bucket(user=user.id)
+            bucket = await mem.get_bucket(user=user.id, default={})
 
             locale = bucket.get('locale', None)
 
