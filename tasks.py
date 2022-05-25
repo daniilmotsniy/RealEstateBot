@@ -8,8 +8,7 @@ from lang import i18n
 
 
 class PeriodicTask:
-    def __init__(self, bot: Bot, days: int, time: str, text):
-        self.bot = bot
+    def __init__(self, days: int, time: str, text):
         self.days = days
         self.time = time
         self.text = text
@@ -19,7 +18,7 @@ class PeriodicTask:
     async def send_msg(self):
         for chat_id, locale in self.chat_ids:
             i18n.ctx_locale.set(locale)
-            await self.bot.send_message(chat_id, self.text, disable_notification=True)
+            await Bot.get_current().send_message(chat_id, self.text, disable_notification=True)
 
     def every(self):
         aioschedule.every(interval=self.days).days.at(self.time).do(self.send_msg)

@@ -10,11 +10,6 @@ class ButtonText:
     jobs = "Вакансии"
 
 
-class InlineButtonText:
-    write = "Написать"
-    more = "Подробнее"
-
-
 class Keyboards:
     country_selection = ReplyKeyboardMarkup([[
             KeyboardButton(ButtonText.country_georgia),
