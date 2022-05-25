@@ -8,7 +8,7 @@ from lang import i18n
 async def _query_wp(slug: str, country: str) -> Union[dict, list]:
     if country == 'uk':
         url = 'https://avezor.com/wp-json/wp/v2/'
-    elif country == 'ge':
+    elif country == 'ka':
         url = 'https://avezor.ge/wp-json/wp/v2/'
     else:
         raise ValueError('Country not found')

@@ -1,0 +1,84 @@
+# Georgian translations for AvezorBot.
+# Copyright (C) 2022 ORGANIZATION
+# This file is distributed under the same license as the AvezorBot project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: AvezorBot 2.2\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2022-05-24 17:42+0300\n"
+"PO-Revision-Date: 2022-05-25 14:26+0300\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ka\n"
+"Language-Team: ka <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.10.1\n"
+
+#: post.py:36
+msgid "post_Address"
+msgstr ""
+
+#: post.py:37
+msgid "post_District"
+msgstr ""
+
+#: post.py:38
+msgid "post_City"
+msgstr ""
+
+#: post.py:39
+msgid "post_Region"
+msgstr ""
+
+#: post.py:40
+msgid "post_Area"
+msgstr ""
+
+#: post.py:41
+msgid "post_Rooms"
+msgstr ""
+
+#: post.py:42
+msgid "post_Floor"
+msgstr ""
+
+#: post.py:43
+msgid "post_Price"
+msgstr ""
+
+#: post.py:44
+msgid "post_ID"
+msgstr ""
+
+#: run.py:26
+msgid "nightSpam"
+msgstr ""
+
+#: run.py:27
+msgid "daySpam"
+msgstr ""
+
+#: run.py:38
+msgid "buttonReply_addObject"
+msgstr ""
+
+#: run.py:43
+msgid "buttonReply_jobs"
+msgstr ""
+
+#: run.py:48
+msgid "Current language: {lang}."
+msgstr ""
+
+#: run.py:53
+msgid "Changed language to: {lang}."
+msgstr ""
+
+#: run.py:56
+msgid "Language {lang} not found."
+msgstr ""
+

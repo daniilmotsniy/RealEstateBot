@@ -31,7 +31,7 @@ async def h__start(msg: Message):
 
 @dp.message_handler(text=ButtonText.country_georgia)
 async def h__any__country_georgia(msg: Message):
-    await i18n.set_locale(msg.from_user, 'ge')
+    await i18n.set_locale(msg.from_user, 'ka')
     await msg.answer('[что-то на грузинском (или и тут нужна мультиязычность?)]', reply_markup=Keyboards.start)
 
 
