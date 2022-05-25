@@ -58,7 +58,7 @@ async def h__lang(msg: Message, locale: str):
 
 @dp.message_handler(commands=['send'])
 async def h__send__post(msg: Message):
-    posts = [Post('229500', 'com')]
+    posts = [Post('229500', 'com'), Post('231004', 'ge')]
     for post in posts:
         await bot.send_photo(msg.chat.id, post.get_photo_url(),
                              post.get_description(), reply_markup=post.get_buttons())

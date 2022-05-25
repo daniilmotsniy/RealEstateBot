@@ -19,7 +19,7 @@ class Post:
 
     def __init__(self, estate_id, domain):
         def get_taxonomy(api: str):
-            return next(iter(requests.get(f'{api}={estate_id}').json())).get('name')
+            return next(iter(requests.get(f'{api}={estate_id}', verify=False).json())).get('name')
 
         api_prefix = f'https://avezor.{domain}/wp-json/wp/v2/'
         estate_api = api_prefix + 'estate_property'
@@ -27,7 +27,7 @@ class Post:
         city_api = api_prefix + 'property_city?post'
         district_api = api_prefix + 'property_area?post'
 
-        property_data = requests.get(f'{estate_api}/{estate_id}').json()
+        property_data = requests.get(f'{estate_api}/{estate_id}', verify=False).json()
         self._post_id = property_data.get('mls')
         self._name = property_data.get('title')['rendered']
         self._address = property_data.get('property_address')
@@ -66,7 +66,7 @@ class Post:
     @staticmethod
     def convert_photo(photo_data_link: str) -> memoryview:
         photo_link = next(iter(
-            requests.get(photo_data_link).json()
+            requests.get(photo_data_link, verify=False).json()
         )).get('media_details').get('sizes').get('medium').get('s3').get('url')
         img = Image.open(requests.get(photo_link, stream=True).raw)
         photo_buffer = io.BytesIO()
