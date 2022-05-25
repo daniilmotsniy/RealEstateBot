@@ -1,4 +1,8 @@
+import io
+
+import requests
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from PIL import Image
 
 from keyboards import InlineButtonText
 from lang import i18n
@@ -7,31 +11,44 @@ _ = __ = i18n.gettext
 
 
 class Post:
+    """
+    this class converts estate property by given WP API to telegram post
+    """
+
     CONTACT_LINK = 'https://t.me/avezor'
 
-    def __init__(self,
-                 post_id, name, photo, address,
-                 region, city, district,
-                 area, rooms, floor, price, link):
-        self._post_id = post_id
-        self._name = name
-        self._photo = photo
-        self._address = address
-        self._region = region
-        self._city = city
-        self._district = district
-        self._area = area
-        self._rooms = rooms
-        self._floor = floor
-        self._price = price
-        self._link = link
+    def __init__(self, estate_id, domain):
+        def get_taxonomy(api: str):
+            return next(iter(requests.get(f'{api}={estate_id}').json())).get('name')
 
-    def get_buttons(self):
+        api_prefix = f'https://avezor.{domain}/wp-json/wp/v2/'
+        estate_api = api_prefix + 'estate_property'
+        region_api = api_prefix + 'property_county_state?post'
+        city_api = api_prefix + 'property_city?post'
+        district_api = api_prefix + 'property_area?post'
+
+        property_data = requests.get(f'{estate_api}/{estate_id}').json()
+        self._post_id = property_data.get('mls')
+        self._name = property_data.get('title')['rendered']
+        self._address = property_data.get('property_address')
+        self._region = get_taxonomy(region_api)
+        self._city = get_taxonomy(city_api)
+        self._district = get_taxonomy(district_api)
+        self._area = property_data.get('property_size')
+        self._rooms = property_data.get('property_rooms')
+        self._floor = property_data.get('floors')
+        self._price = f"{property_data.get('property_price')} {property_data.get('property_label_before')}"
+        self._link = property_data.get('link')
+
+        photo_data_link = next(iter(property_data['_links'].get('wp:attachment'))).get('href')
+        self._photo = self.convert_photo(photo_data_link)
+
+    def get_buttons(self) -> InlineKeyboardMarkup:
         write_btn = InlineKeyboardButton(InlineButtonText.write, url=self.CONTACT_LINK)
         more_btn = InlineKeyboardButton(InlineButtonText.more, url=self._link)
         return InlineKeyboardMarkup().add(write_btn, more_btn)
 
-    def get_description(self):
+    def get_description(self) -> str:
         return f'{self._name}\n' + \
                _('post_Address') + f': {self._address}\n' + \
                _('post_District') + f': {self._district}\n' + \
@@ -43,5 +60,15 @@ class Post:
                _('post_Price') + f': {self._price}\n' + \
                _('post_ID') + f': {self._post_id}'
 
-    def get_photo_url(self):
+    def get_photo_url(self) -> memoryview:
         return self._photo
+
+    @staticmethod
+    def convert_photo(photo_data_link: str) -> memoryview:
+        photo_link = next(iter(
+            requests.get(photo_data_link).json()
+        )).get('media_details').get('sizes').get('medium').get('s3').get('url')
+        img = Image.open(requests.get(photo_link, stream=True).raw)
+        photo_buffer = io.BytesIO()
+        img.save(photo_buffer, format='JPEG', quality=75)
+        return photo_buffer.getbuffer()
