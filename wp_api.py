@@ -5,7 +5,10 @@ import aiohttp
 from lang import i18n
 
 
-async def _query_wp(slug: str, country: str) -> Union[dict, list]:
+async def _query_wp(slug: str, country: str = None) -> Union[dict, list]:
+    if country is None:
+        country = i18n.ctx_locale.get()
+
     if country == 'uk':
         url = 'https://avezor.com/wp-json/wp/v2/'
     elif country == 'ka':
@@ -19,4 +22,20 @@ async def _query_wp(slug: str, country: str) -> Union[dict, list]:
 
 
 async def get_regions() -> list[tuple[str, str]]:
-    return [(x['slug'], x['name']) for x in await _query_wp('property_county_state', i18n.ctx_locale.get())]
+    return [(x['slug'], x['name']) for x in await _query_wp('property_county_state')]
+
+
+async def get_districts(region_name: str) -> list[tuple[str, str]]:
+    return [(x['slug'], x['name']) for x in await _query_wp('property_city') if x['stateparent'] == region_name]
+
+
+async def get_action_types() -> list[tuple[str, str]]:
+    return [(x['slug'], x['name']) for x in await _query_wp('property_action_category')]
+
+
+async def get_property_types() -> list[tuple[str, str]]:
+    return [(x['slug'], x['name']) for x in await _query_wp('property_category')]
+
+
+async def get_room_counts() -> list[tuple[str, str]]:
+    return [(x['slug'], x['name']) for x in await _query_wp('property_count_rooms')]
