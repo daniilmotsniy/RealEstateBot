@@ -19,7 +19,7 @@ class Post:
 
     def __init__(self, estate_id, domain):
         def get_taxonomy(api: str):
-            return requests.get(f'{api}={estate_id}').json()[0].get('name')
+            return next(iter(requests.get(f'{api}={estate_id}').json())).get('name')
 
         api_prefix = f'https://avezor.{domain}/wp-json/wp/v2/'
         estate_api = api_prefix + 'estate_property'
@@ -40,7 +40,7 @@ class Post:
         self._price = f"{property_data.get('property_price')} {property_data.get('property_label_before')}"
         self._link = property_data.get('link')
 
-        photo_data_link = property_data['_links'].get('wp:attachment')[0].get('href')
+        photo_data_link = next(iter(property_data['_links'].get('wp:attachment'))).get('href')
         self._photo = self.convert_photo(photo_data_link)
 
     def get_buttons(self) -> InlineKeyboardMarkup:
