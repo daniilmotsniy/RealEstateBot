@@ -1,10 +1,9 @@
 import io
 
 import requests
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from PIL import Image
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from keyboards import InlineButtonText
 from lang import i18n
 
 _ = __ = i18n.gettext
@@ -44,8 +43,8 @@ class Post:
         self._photo = self.convert_photo(photo_data_link)
 
     def get_buttons(self) -> InlineKeyboardMarkup:
-        write_btn = InlineKeyboardButton(InlineButtonText.write, url=self.CONTACT_LINK)
-        more_btn = InlineKeyboardButton(InlineButtonText.more, url=self._link)
+        write_btn = InlineKeyboardButton(_("Написать"), url=self.CONTACT_LINK)
+        more_btn = InlineKeyboardButton(_("Подробнее"), url=self._link)
         return InlineKeyboardMarkup().add(write_btn, more_btn)
 
     def get_description(self) -> str:

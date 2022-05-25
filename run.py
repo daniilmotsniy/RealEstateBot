@@ -1,30 +1,23 @@
 import logging
 from os import getenv
 
-from aiogram import Bot, Dispatcher, executor
-from aiogram.contrib.fsm_storage.mongo import MongoStorage
+from aiogram import executor
 from aiogram.types import Message
 
+from avbot import bot, dp
 from keyboards import ButtonText, Keyboards
 from lang import i18n
 from post import Post
 from tasks import Scheduler, PeriodicTask
 
-if getenv('BOT_DEBUG'):
-    logging.basicConfig(level=logging.DEBUG)
-
-bot = Bot(token=getenv('BOT_TOKEN'))
-mem = MongoStorage(db_name='AvezorBot', uri=getenv('MONGODB_URL') or 'localhost')
-dp = Dispatcher(bot, storage=mem)
-
-dp.middleware.setup(i18n)
+logging.basicConfig(level=(logging.WARNING, logging.INFO, logging.DEBUG)[int(getenv('BOT_DEBUG') or 0)])
 
 _ = __ = i18n.gettext
 ___ = i18n.lazy_gettext
 
 scheduler = Scheduler(
-    PeriodicTask(bot, 1, '22:00', ___('nightSpam')),
-    PeriodicTask(bot, 5, '18:00', ___('daySpam')),
+    PeriodicTask(1, '22:00', ___('nightSpam')),
+    PeriodicTask(5, '18:00', ___('daySpam')),
 )
 
 
