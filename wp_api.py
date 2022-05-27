@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Any
 
 import aiohttp
 
@@ -39,3 +39,8 @@ async def get_property_types() -> list[tuple[int, str]]:
 
 async def get_room_counts() -> list[tuple[int, str]]:
     return [(x['id'], x['name']) for x in await _query_wp('property_count_rooms')]
+
+
+async def get_estate() -> list[Any]:
+    return [x for x in await _query_wp('estate_property')]
+
