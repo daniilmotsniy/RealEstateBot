@@ -1,10 +1,13 @@
 import io
+from typing import List
 
 import requests
 from PIL import Image
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
+from avbot import mem
 from lang import i18n
+from wp_api import get_estate
 
 _ = __ = i18n.gettext
 
@@ -16,11 +19,14 @@ class Post:
 
     CONTACT_LINK = 'https://t.me/avezor'
 
-    def __init__(self, estate_id, domain):
+    def __init__(self, estate_id: str, locale: str):
         def get_taxonomy(api: str):
             return next(iter(requests.get(f'{api}={estate_id}', verify=False).json())).get('name')
 
-        api_prefix = f'https://avezor.{domain}/wp-json/wp/v2/'
+        api_prefix = 'https://avezor.com/wp-json/wp/v2/'
+        if locale == 'ka':
+            api_prefix = 'https://avezor.ge/wp-json/wp/v2/'
+
         estate_api = api_prefix + 'estate_property'
         region_api = api_prefix + 'property_county_state?post'
         city_api = api_prefix + 'property_city?post'
@@ -71,3 +77,26 @@ class Post:
         photo_buffer = io.BytesIO()
         img.save(photo_buffer, format='JPEG', quality=75)
         return photo_buffer.getbuffer()
+
+
+class PostsFiltration:
+    def __init__(self, user_id: int):
+        self._user_id: int = user_id
+
+    async def get_criteria(self):
+        bucket = await mem.get_bucket(user=self._user_id)
+        if bucket.get('query_formed') is False:
+            return None
+        return bucket
+
+    async def find_estate(self) -> List[Post]:
+        results = list()
+        criteria = await self.get_criteria()
+        all_objects = await get_estate()
+        for obj in all_objects:
+            price = int(obj['property_price'])
+            # add more criteria
+            if criteria['amount_min'] >= price or price >= criteria['amount_max']:
+                continue
+            results.append(Post(obj['id'], criteria['locale']))
+        return results

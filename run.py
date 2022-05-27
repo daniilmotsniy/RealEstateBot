@@ -7,7 +7,7 @@ from aiogram.types import Message
 from avbot import bot, dp
 from keyboards import ButtonText, Keyboards
 from lang import i18n
-from post import Post
+from post import Post, PostsFiltration
 from tasks import Scheduler, PeriodicTask
 
 # noinspection PyUnresolvedReferences
@@ -71,7 +71,7 @@ async def h__lang(msg: Message, locale: str):
 
 @dp.message_handler(commands=['send'])
 async def h__send_post(msg: Message):
-    posts = [Post('229500', 'com'), Post('231004', 'ge')]
+    posts = await PostsFiltration(msg.from_user.id).find_estate()
     for post in posts:
         await bot.send_photo(msg.chat.id, post.get_photo_url(),
                              post.get_description(), reply_markup=post.get_buttons())
