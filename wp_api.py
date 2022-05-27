@@ -42,5 +42,4 @@ async def get_room_counts() -> list[tuple[int, str]]:
 
 
 async def get_estate() -> list[Any]:
-    return [x for x in await _query_wp('estate_property')]
-
+    return await _query_wp('estate_property')
