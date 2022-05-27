@@ -11,7 +11,7 @@ from lang import i18n
 _ = __ = i18n.gettext
 
 
-def create_dynamic_inline_keyboard(values: Sequence[tuple[str, Union[str, int]]], cols: int, domain: str, back: bool = False):
+def create_dynamic_inline_keyboard(values: Sequence[tuple[Union[str, int], Union[str, int]]], cols: int, domain: str, back: bool = False):
     length = len(values)
 
     if back:
@@ -26,8 +26,12 @@ def create_dynamic_inline_keyboard(values: Sequence[tuple[str, Union[str, int]]]
     return InlineKeyboardMarkup(cols, kb)
 
 
-async def _edit_msg(query: CallbackQuery, text: str, buttons: Sequence[tuple[str, Union[str, int]]], domain: str, cols: int = 2, back: bool = False):
+async def _edit_msg(query: CallbackQuery, text: str, buttons: Sequence[tuple[Union[str, int], Union[str, int]]], domain: str, cols: int = 2, back: bool = False):
     await query.message.edit_text(text, reply_markup=create_dynamic_inline_keyboard(buttons, cols, domain, back=back))
+
+
+def _get_currency(bucket: dict) -> str:
+    return 'гривне' if bucket['deal_type'] == 180 else 'долларах'
 
 
 @dp.message_handler(text=ButtonText.change_cohort)
@@ -41,7 +45,7 @@ async def h__any__change_cohort(msg: Message):
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/region/'))
 async def q__any__f_region(query: CallbackQuery):
-    slug = query.data.removeprefix('f/region/')
+    slug = int(query.data.removeprefix('f/region/'))
 
     await mem.update_bucket(user=query.from_user.id, region=slug)
 
@@ -49,14 +53,14 @@ async def q__any__f_region(query: CallbackQuery):
 
     region_name = dict(regions)[slug]
 
-    districts = [(slug, name) for slug, name in await wp_api.get_districts(region_name) if slug != 'all']
+    districts = [(_id, name) for _id, name in await wp_api.get_districts(region_name) if name != 'all']
 
     await _edit_msg(query, "Выберите район:", districts, 'f/district', back=True)
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/district/'))
 async def q__any__f_district(query: CallbackQuery):
-    slug = query.data.removeprefix('f/district/')
+    slug = int(query.data.removeprefix('f/district/'))
 
     await mem.update_bucket(user=query.from_user.id, district=slug)
 
@@ -67,7 +71,7 @@ async def q__any__f_district(query: CallbackQuery):
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/actionType/'))
 async def q__any__f_district(query: CallbackQuery):
-    slug = query.data.removeprefix('f/actionType/')
+    slug = int(query.data.removeprefix('f/actionType/'))
 
     await mem.update_bucket(user=query.from_user.id, deal_type=slug)
 
@@ -80,19 +84,20 @@ async def q__any__f_district(query: CallbackQuery):
 
     slug = query.data.removeprefix('f/postType/')
 
-    await mem.update_bucket(user=query.from_user.id, deal_type=slug)
+    await mem.update_bucket(user=query.from_user.id, post_type=slug)
 
     if slug == 'housing' or slug == 'commercial':
         types = dict(await wp_api.get_property_types())
 
         # TODO
-        del types['zhiloj-fond']
-        del types['zemlya']
+        del types[178]  # zhiloj-fond
+        del types[274]  # zemlya
 
         filtered_types = []  # TODO
 
         for k, name in types.items():
-            if k in {'gostinka', 'dacha', 'doma', 'kvartira'}:
+            # if k in {'gostinka', 'dacha', 'doma', 'kvartira'}:
+            if k in {179, 202, 247, 300}:
                 if slug == 'housing':
                     filtered_types.append((k, name))
             elif slug == 'commercial':
@@ -107,11 +112,11 @@ async def q__any__f_district(query: CallbackQuery):
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/propType/'))
 async def q__any__f_district(query: CallbackQuery):
-    slug = query.data.removeprefix('f/propType/')
+    slug = int(query.data.removeprefix('f/propType/'))
 
     await mem.update_bucket(user=query.from_user.id, property_type=slug)
 
-    if slug == 'kvartira':
+    if slug == 300:  # kvartira
         room_counts = await wp_api.get_room_counts()
 
         await _edit_msg(query, "Сколько должно быть комнат в квартире?", room_counts, 'f/roomCounts', back=True)
@@ -121,7 +126,7 @@ async def q__any__f_district(query: CallbackQuery):
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/roomCounts/'))
 async def q__any__f_district(query: CallbackQuery):
-    slug = query.data.removeprefix('f/roomCounts/')
+    slug = int(query.data.removeprefix('f/roomCounts/'))
 
     await mem.update_bucket(user=query.from_user.id, room_counts=[slug])
 
@@ -129,7 +134,9 @@ async def q__any__f_district(query: CallbackQuery):
 
 
 async def _query_city(query: CallbackQuery):
-    currency = 'гривне' if (await mem.get_bucket(user=query.from_user.id))['deal_type'] == 'arenda' else 'долларах'
+    bucket = await mem.get_bucket(user=query.from_user.id)
+
+    currency = _get_currency(bucket)
 
     await mem.update_bucket(user=query.from_user.id, amount_min=None, amount_max=None)
 
@@ -162,11 +169,13 @@ async def h__any__amount(msg: Message):
         if await _try_to_set_amount(msg):
             bucket = await mem.get_bucket(user=msg.from_user.id)
 
-            currency = 'гривне' if bucket['deal_type'] == 'arenda' else 'долларах'
+            currency = _get_currency(bucket)
 
             await msg.answer(f"Указна сумма от {bucket['amount_min']} до {bucket['amount_max']} в {currency}", reply_markup=create_dynamic_inline_keyboard((('edit', "Изменить сумму"), ('next', "Далее")), 2, 'f/checkAmount', back=True))
         else:
-            currency = 'гривне' if (await mem.get_bucket(user=msg.from_user.id))['deal_type'] == 'arenda' else 'долларах'
+            bucket = await mem.get_bucket(user=msg.from_user.id)
+
+            currency = _get_currency(bucket)
 
             await msg.answer(f"Укажите ниже максимальную сумму в {currency}.")
     except ValueError:
@@ -180,7 +189,9 @@ async def q__any__f_district(query: CallbackQuery):
     slug = query.data.removeprefix('f/checkAmount/')
 
     if slug == 'edit':
-        currency = 'гривне' if (await mem.get_bucket(user=query.from_user.id))['deal_type'] == 'arenda' else 'долларах'
+        bucket = await mem.get_bucket(user=query.from_user.id)
+
+        currency = _get_currency(bucket)
 
         await mem.update_bucket(user=query.from_user.id, amount_min=None, amount_max=None)
 
