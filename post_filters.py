@@ -117,9 +117,7 @@ async def q__any__f_district(query: CallbackQuery):
     await mem.update_bucket(user=query.from_user.id, property_type=slug)
 
     if slug == 300:  # kvartira
-        room_counts = await wp_api.get_room_counts()
-
-        await _edit_msg(query, "Сколько должно быть комнат в квартире?", room_counts, 'f/roomCounts', back=True)
+        await _edit_msg(query, "Сколько должно быть комнат в квартире?", [(i, '5+' if i == 5 else i) for i in range(1, 6)], 'f/roomCounts', back=True)
     else:
         await _query_city(query)
 
