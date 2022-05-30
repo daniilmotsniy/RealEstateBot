@@ -95,8 +95,20 @@ class PostsFiltration:
         all_objects = await get_estate()
         for obj in all_objects:
             price = int(obj['property_price'])
-            # add more criteria
-            if criteria['amount_min'] >= price or price >= criteria['amount_max']:
-                continue
+            # rooms = int(obj['property_rooms'])
+            region = obj.get('property_county_state')
+            deal_type = obj.get('property_action_category')
+            if criteria.get('amount_min') and criteria.get('amount_max'):
+                if criteria['amount_min'] >= price or criteria['amount_max'] <= price:
+                    continue
+            # if rooms > 0 and criteria.get('room_counts'):
+            #     if rooms not in criteria['room_counts']:
+            #         continue
+            if criteria.get('region') and len(region) > 0:
+                if region[0] != criteria['region']:
+                    continue
+            if criteria.get('deal_type') and len(deal_type) > 0:
+                if deal_type[0] != criteria['deal_type']:
+                    continue
             results.append(Post(obj['id'], criteria['locale']))
         return results
