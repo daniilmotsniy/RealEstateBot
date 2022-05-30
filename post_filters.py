@@ -27,6 +27,15 @@ def create_dynamic_inline_keyboard(values: Sequence[tuple[Union[str, int], Union
     return InlineKeyboardMarkup(cols, kb)
 
 
+def create_multiple_choice_keyboard(values: Sequence[tuple[Union[str, int], Union[str, int]]], selected: Sequence[Union[str, int]], cols: int, domain: str, select_all: bool = False, back: bool = False):
+    all_selected = all(slug in selected for slug, text in values)
+    values = ((slug, f"{'✅' if slug in selected else '◽️'} {text}") for slug, text in values)
+
+    return create_dynamic_inline_keyboard(list(
+        itertools.chain(values, (('all', _('unselectAll') if all_selected else _('selectAll')), ('next', _('next')))[not select_all:])
+    ), cols, domain, back=back)
+
+
 async def _edit_msg(query: CallbackQuery, text: str, buttons: Sequence[tuple[Union[str, int], Union[str, int]]], domain: str, cols: int = 2, back: bool = False):
     await query.message.edit_text(text, reply_markup=create_dynamic_inline_keyboard(buttons, cols, domain, back=back))
 
@@ -111,6 +120,17 @@ async def q__any__f_district(query: CallbackQuery):
         raise ValueError('Unknown post type')
 
 
+async def _query_room_counts(query: CallbackQuery):
+    bucket = await mem.get_bucket(user=query.from_user.id)
+
+    room_counts = bucket.get('room_counts', [])
+
+    await query.message.edit_text("Сколько должно быть комнат в квартире?",
+                                  reply_markup=create_multiple_choice_keyboard([
+                                      (i, '5+' if i == 5 else i) for i in range(1, 6)
+                                  ], room_counts, 2, 'f/roomCounts', select_all=True, back=True))
+
+
 @dp.callback_query_handler(lambda c: c.data.startswith('f/propType/'))
 async def q__any__f_district(query: CallbackQuery):
     slug = int(query.data.removeprefix('f/propType/'))
@@ -118,18 +138,32 @@ async def q__any__f_district(query: CallbackQuery):
     await mem.update_bucket(user=query.from_user.id, property_type=slug)
 
     if slug == 300:  # kvartira
-        await _edit_msg(query, "Сколько должно быть комнат в квартире?", [(i, '5+' if i == 5 else i) for i in range(1, 6)], 'f/roomCounts', back=True)
+        await _query_room_counts(query)
     else:
         await _query_city(query)
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/roomCounts/'))
 async def q__any__f_district(query: CallbackQuery):
-    slug = int(query.data.removeprefix('f/roomCounts/'))
+    slug = query.data.removeprefix('f/roomCounts/')
 
-    await mem.update_bucket(user=query.from_user.id, room_counts=[slug])
+    if slug == 'next':
+        await _query_city(query)
+        return
 
-    await _query_city(query)
+    bucket = await mem.get_bucket(user=query.from_user.id)
+
+    if slug == 'all':
+        if set(bucket.get('room_counts', ())) == set(range(1, 6)):
+            room_counts = []
+        else:
+            room_counts = list(range(1, 6))
+    else:
+        room_counts = list(set(bucket.get('room_counts', ())) ^ {int(slug)})
+
+    await mem.update_bucket(user=query.from_user.id, room_counts=room_counts)
+
+    await _query_room_counts(query)
 
 
 async def _query_city(query: CallbackQuery):
