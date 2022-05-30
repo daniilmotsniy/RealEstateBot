@@ -92,18 +92,20 @@ class PostsFiltration:
     async def find_estate(self) -> List[Post]:
         results = list()
         criteria = await self.get_criteria()
+        if not criteria:
+            return []
         all_objects = await get_estate()
         for obj in all_objects:
             price = int(obj['property_price'])
-            # rooms = int(obj['property_rooms'])
+            rooms = int(obj['property_rooms'])
             region = obj.get('property_county_state')
             deal_type = obj.get('property_action_category')
             if criteria.get('amount_min') and criteria.get('amount_max'):
                 if criteria['amount_min'] >= price or criteria['amount_max'] <= price:
                     continue
-            # if rooms > 0 and criteria.get('room_counts'):
-            #     if rooms not in criteria['room_counts']:
-            #         continue
+            if rooms > 0 and criteria.get('room_counts'):
+                if rooms not in criteria['room_counts'].values():
+                    continue
             if criteria.get('region') and len(region) > 0:
                 if region[0] != criteria['region']:
                     continue
