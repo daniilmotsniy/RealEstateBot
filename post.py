@@ -104,7 +104,7 @@ class PostsFiltration:
                 if criteria['amount_min'] >= price or criteria['amount_max'] <= price:
                     continue
             if rooms > 0 and criteria.get('room_counts'):
-                if rooms not in criteria['room_counts'].values():
+                if rooms not in criteria['room_counts']:
                     continue
             if criteria.get('region') and len(region) > 0:
                 if region[0] != criteria['region']:
