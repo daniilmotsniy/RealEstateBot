@@ -7,7 +7,7 @@ from aiogram.types import Message
 from avbot import bot, dp
 from keyboards import ButtonText, Keyboards
 from lang import i18n
-from post import Post, PostsFiltration
+from post import PostsFiltration
 from tasks import Scheduler, PeriodicTask
 
 # noinspection PyUnresolvedReferences

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AvezorBot 2.2\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-05-23 21:48+0300\n"
+"POT-Creation-Date: 2022-05-23 22:28+0300\n"
 "PO-Revision-Date: 2022-05-23 16:38+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: uk\n"
@@ -19,31 +19,29 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.10.1\n"
 
-#: run.py:27
-msgid "nightSpam"
-msgstr ""
-
-#: run.py:28
-msgid "daySpam"
-msgstr ""
-
-#: run.py:39
+#: run.py:37
 msgid "buttonReply_addObject"
 msgstr ""
 
-#: run.py:44
+#: run.py:42
 msgid "buttonReply_jobs"
 msgstr ""
 
-#: run.py:49
+#: run.py:47
 msgid "Current language: {lang}."
 msgstr ""
 
-#: run.py:54
+#: run.py:52
 msgid "Changed language to: {lang}."
 msgstr ""
 
-#: run.py:56
+#: run.py:54
 msgid "Language {lang} not found."
 msgstr ""
+
+#~ msgid "nightSpam"
+#~ msgstr ""
+
+#~ msgid "daySpam"
+#~ msgstr ""
 

@@ -4,9 +4,10 @@ from typing import Sequence, Union
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 import wp_api
-from avbot import dp, mem
+from avbot import dp, mem, bot
 from keyboards import ButtonText
 from lang import i18n
+from post import PostsFiltration
 
 _ = __ = i18n.gettext
 
@@ -203,4 +204,8 @@ async def q__any__f_district(query: CallbackQuery):
 
 
 async def _show_results(query: CallbackQuery):
-    await query.message.answer("Вот, что я нашел по Вашему запросу: []\n\nМы Вас запомнили. Ждите 22:00. 😈")
+    await query.message.answer("Вот, что я нашел по Вашему запросу.\nМы Вас запомнили. Ждите 22:00. 😈")
+    posts = await PostsFiltration(query.from_user.id).find_estate()
+    for post in posts:
+        await bot.send_photo(query.message.chat.id, post.get_photo_url(),
+                             post.get_description(), reply_markup=post.get_buttons())
