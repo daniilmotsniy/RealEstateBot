@@ -8,7 +8,7 @@ from avbot import bot, dp
 from keyboards import ButtonText, Keyboards
 from lang import i18n
 from post import PostsFiltration
-from tasks import Scheduler, PeriodicTask
+from tasks import Scheduler, PeriodicDailyText, PeriodicPostSpammer
 
 # noinspection PyUnresolvedReferences
 import post_filters
@@ -19,8 +19,9 @@ _ = __ = i18n.gettext
 ___ = i18n.lazy_gettext
 
 scheduler = Scheduler(
-    PeriodicTask(1, '22:00', ___('nightSpam')),
-    PeriodicTask(5, '18:00', ___('daySpam')),
+    PeriodicDailyText(1, '22:00', ___('nightSpam')),
+    PeriodicDailyText(5, '18:00', ___('daySpam')),
+    PeriodicPostSpammer(1),
 )
 
 
