@@ -57,9 +57,6 @@ class PeriodicPostSpammer(PeriodicTask):
         super().__init__()
         self.interval = interval
 
-    def get_new_appartment_ids(self):
-        return []
-
     async def get_bot_coroutine(self, chat_id):
         posts = await PostsFiltration(chat_id).find_estate()
         for post in posts:
