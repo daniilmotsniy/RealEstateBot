@@ -63,46 +63,32 @@ async def p__district(slug: int = None):
 
         slug = bucket['region']
 
-    region_name = dict(await wp_api.get_regions())[slug]
+    districts = [(_id, name) for _id, name in await wp_api.get_districts(slug) if name != 'all']
 
-    districts = [(_id, name) for _id, name in await wp_api.get_districts(region_name) if name != 'all']
-
-    return _dict(_("Выберите район:"), districts, 'f/district', back=True)
+    return _dict(_("Выберите город:"), districts, 'f/district', back=True)
 
 
 async def p__action_type():
-    action_types = await wp_api.get_action_types()
+    action_types = await wp_api.get_actions()
 
     return _dict(_("Что Вас интересует?"), action_types, 'f/actionType', back=True)
 
 
 async def p__post_type():
-    return _dict(_("Выберите категорию:"), (('housing', _('housing')), ('land', _('land')), ('commercial', _('commercial'))), 'f/postType', back=True)
+    cat_types = await wp_api.get_property_types()
+
+    return _dict(_("Выберите категорию:"), cat_types, 'f/postType', back=True)
 
 
-async def p__prop_type(slug: str = None):
+async def p__prop_type(slug: int = None):
     if slug is None:
         bucket = await mem.get_bucket(user=User.get_current().id)
 
         slug = bucket['post_type']
 
-    types = dict(await wp_api.get_property_types())
+    types = await wp_api.get_property_types(slug)
 
-    # TODO
-    del types[178]  # zhiloj-fond
-    del types[274]  # zemlya
-
-    filtered_types = []  # TODO
-
-    for k, name in types.items():
-        # if k in {'gostinka', 'dacha', 'doma', 'kvartira'}:
-        if k in {179, 202, 247, 300}:
-            if slug == 'housing':
-                filtered_types.append((k, name))
-        elif slug == 'commercial':
-            filtered_types.append((k, name))
-
-    return _dict(_("Выберите тип объекта:"), filtered_types, 'f/propType', back=True)
+    return _dict(_("Выберите тип объекта:"), types, 'f/propType', back=True)
 
 
 async def p__room_counts():
@@ -113,6 +99,20 @@ async def p__room_counts():
     return dict(text=_("Сколько должно быть комнат в квартире?"), reply_markup=create_multiple_choice_keyboard([
         (i, '5+' if i == 5 else i) for i in range(1, 6)
     ], room_counts, 2, 'f/roomCounts', allow_nothing=False, select_all=True, back=True))
+
+
+async def p__wards(region_id: int = None):
+    bucket = await mem.get_bucket(user=User.get_current().id)
+
+    if region_id is None:
+        region_id = bucket['district']
+
+    cat_types = await wp_api.get_wards(region_id)
+
+    wards = bucket.get('wards', [])
+
+    return dict(text=_("Выберите район:"), reply_markup=create_multiple_choice_keyboard(
+        cat_types, wards, 2, 'f/ward', allow_nothing=False, select_all=True, back=True))
 
 
 @dp.message_handler(text=ButtonText.change_cohort)
@@ -163,20 +163,20 @@ async def q__any__f_action_type(query: CallbackQuery):
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/postType/'))
 async def q__any__f_post_type(query: CallbackQuery):
-    slug = query.data.removeprefix('f/postType/')
+    s_slug = query.data.removeprefix('f/postType/')
 
-    if slug == 'back':
+    if s_slug == 'back':
         await _edit(query, **await p__action_type())
         return
 
+    slug = int(s_slug)
+
     await mem.update_bucket(user=query.from_user.id, post_type=slug)
 
-    if slug == 'housing' or slug == 'commercial':
+    if slug == 178 or slug == 279:  # housing or commercial
         await _edit(query, **await p__prop_type(slug))
-    elif slug == 'land':
-        await _query_city(query)
     else:
-        raise ValueError('Unknown post type')
+        await _edit(query, **await p__wards())
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/propType/'))
@@ -194,7 +194,7 @@ async def q__any__f_prop_type(query: CallbackQuery):
     if slug == 300:  # kvartira
         await _edit(query, **await p__room_counts())
     else:
-        await _query_city(query)
+        await _edit(query, **await p__wards())
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/roomCounts/'))
@@ -206,7 +206,7 @@ async def q__any__f_room_counts(query: CallbackQuery):
         return
 
     if slug == 'next':
-        await _query_city(query)
+        await _edit(query, **await p__wards())
         return
 
     bucket = await mem.get_bucket(user=query.from_user.id)
@@ -224,14 +224,43 @@ async def q__any__f_room_counts(query: CallbackQuery):
     await _edit(query, **await p__room_counts())
 
 
-async def _query_city(query: CallbackQuery):
+@dp.callback_query_handler(lambda c: c.data.startswith('f/ward/'))
+async def q__any__f_ward(query: CallbackQuery):
+    slug = query.data.removeprefix('f/ward/')
+
+    if slug == 'back':
+        await _edit(query, **await p__post_type())
+        return
+
+    if slug == 'next':
+        await _query_amount(query)
+        return
+
+    bucket = await mem.get_bucket(user=query.from_user.id)
+
+    if slug == 'all':
+        all_ward_ids = [k for k, v in await wp_api.get_wards(bucket['district'])]
+
+        if set(bucket.get('wards', ())) == set(all_ward_ids):
+            wards = []
+        else:
+            wards = all_ward_ids
+    else:
+        wards = list(set(bucket.get('wards', ())) ^ {int(slug)})
+
+    await mem.update_bucket(user=query.from_user.id, wards=wards)
+
+    await _edit(query, **await p__wards(bucket['district']))
+
+
+async def _query_amount(query: CallbackQuery):
     bucket = await mem.get_bucket(user=query.from_user.id)
 
     currency = _get_currency(bucket)
 
     await mem.update_bucket(user=query.from_user.id, amount_min=None, amount_max=None)
 
-    await query.message.edit_text(f"Может Вы не заметили, но Вы только что выбрали все районы. )\n\nУкажите ниже минимальную сумму в {currency}.")
+    await query.message.edit_text(f"Укажите ниже минимальную сумму в {currency}.")
 
 
 async def _try_to_set_amount(msg: Message) -> bool:

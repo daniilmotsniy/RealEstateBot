@@ -95,7 +95,7 @@ class PostsFiltration:
         if not criteria:
             return []
         shown_ids = criteria.get('shown_ids') or list()
-        all_objects = await get_estate()
+        all_objects = await get_estate()  # TODO newapi
         for obj in all_objects:
             if obj['id'] in shown_ids:
                 continue
