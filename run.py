@@ -38,7 +38,7 @@ async def h__any__country_georgia(msg: Message):
 
 @dp.message_handler(text=ButtonText.country_ukraine)
 async def h__any__country_ukraine(msg: Message):
-    await i18n.set_locale(msg.from_user, 'uk')
+    await i18n.set_locale(msg.from_user, 'ru')
     await msg.answer('Вы выбрали Украину.', reply_markup=Keyboards.start)
 
 
@@ -55,19 +55,6 @@ async def h__add_object(msg: Message):
 @dp.message_handler(text=ButtonText.jobs)
 async def h__jobs(msg: Message):
     await msg.answer(_('buttonReply_jobs'), reply_markup=Keyboards.start)
-
-
-@dp.message_handler(commands=['lang'])
-async def h__lang(msg: Message, locale: str):
-    await msg.answer(_('Current language: {lang}.').format(lang=locale))
-
-    locale = msg.get_args()
-
-    if await i18n.set_locale(msg.from_user, locale):
-        await msg.answer(_('Changed language to: {lang}.').format(lang=locale),
-                         reply_markup=Keyboards.start)
-    else:
-        await msg.answer(_('Language {lang} not found.').format(lang=locale))
 
 
 @dp.message_handler(commands=['send'])

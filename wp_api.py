@@ -9,7 +9,7 @@ async def _query_wp(slug: str, country: str = None) -> Union[dict, list]:
     if country is None:
         country = i18n.ctx_locale.get()
 
-    if country == 'uk':
+    if country == 'ru':
         url = 'https://avezor.com/wp-json/wp/v2/'
     elif country == 'ka':
         url = 'https://avezor.ge/wp-json/wp/v2/'
