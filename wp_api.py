@@ -1,17 +1,18 @@
 from typing import Union, Any
 
 import aiohttp
+from aiogram.types import User
 
-from lang import i18n
+from avbot import mem
 
 
 async def _query_wp(slug: str, country: str = None) -> Union[dict, list]:
     if country is None:
-        country = i18n.ctx_locale.get()
+        country = (await mem.get_bucket(user=User.get_current().id))['country']
 
-    if country == 'ru':
+    if country == 'ua':
         url = 'https://avezor.com/wp-json/wp/v2/'
-    elif country == 'ka':
+    elif country == 'ge':
         url = 'https://avezor.ge/wp-json/wp/v2/'
     else:
         raise ValueError('Country not found')
