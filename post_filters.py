@@ -27,12 +27,15 @@ def create_dynamic_inline_keyboard(values: Sequence[tuple[Union[str, int], Union
     return InlineKeyboardMarkup(cols, kb)
 
 
-def create_multiple_choice_keyboard(values: Sequence[tuple[Union[str, int], Union[str, int]]], selected: Sequence[Union[str, int]], cols: int, domain: str, select_all: bool = False, back: bool = False):
-    all_selected = all(slug in selected for slug, text in values)
+def create_multiple_choice_keyboard(values: Sequence[tuple[Union[str, int], Union[str, int]]], selected: Sequence[Union[str, int]], cols: int, domain: str, allow_nothing: bool = True, select_all: bool = False, back: bool = False):
+    selected_count = sum(slug in selected for slug, text in values)
+    all_selected = selected_count == len(values)
     values = ((slug, f"{'✅' if slug in selected else '◽️'} {text}") for slug, text in values)
 
     return create_dynamic_inline_keyboard(list(
-        itertools.chain(values, (('all', _('unselectAll') if all_selected else _('selectAll')), ('next', _('next')))[not select_all:])
+        itertools.chain(values,
+                        (('all', _('unselectAll') if all_selected else _('selectAll')),) if select_all else (),
+                        (('next', _('next')),) if allow_nothing or selected_count else ())
     ), cols, domain, back=back)
 
 
@@ -109,7 +112,7 @@ async def p__room_counts():
 
     return dict(text=_("Сколько должно быть комнат в квартире?"), reply_markup=create_multiple_choice_keyboard([
         (i, '5+' if i == 5 else i) for i in range(1, 6)
-    ], room_counts, 2, 'f/roomCounts', select_all=True, back=True))
+    ], room_counts, 2, 'f/roomCounts', allow_nothing=False, select_all=True, back=True))
 
 
 @dp.message_handler(text=ButtonText.change_cohort)
