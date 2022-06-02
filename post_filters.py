@@ -48,7 +48,7 @@ async def _edit(query: CallbackQuery, text: str, reply_markup: InlineKeyboardMar
 
 
 def _get_currency(bucket: dict) -> str:
-    return 'гривне' if bucket['deal_type'] == 180 else 'долларах'
+    return 'гривне' if bucket['action'] == 180 else 'долларах'
 
 
 async def p__area():
@@ -154,9 +154,9 @@ async def q__any__f_actions(query: CallbackQuery):
         await _edit(query, **await p__region())
         return
 
-    slug = int(s_slug)
+    action_id = int(s_slug)
 
-    await mem.update_bucket(user=query.from_user.id, deal_type=slug)
+    await mem.update_bucket(user=query.from_user.id, action=action_id)
 
     await _edit(query, **await p__post_type())
 
