@@ -7,7 +7,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from avbot import mem
 from lang import i18n
-from wp_api import get_estate
+from newapi import get_estate
 
 _ = __ = i18n.gettext
 
@@ -95,7 +95,7 @@ class PostsFiltration:
         if not criteria:
             return []
         shown_ids = criteria.get('shown_ids') or list()
-        all_objects = await get_estate()
+        all_objects = await get_estate()  # TODO newapi
         for obj in all_objects:
             if obj['id'] in shown_ids:
                 continue

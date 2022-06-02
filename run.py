@@ -4,7 +4,7 @@ from os import getenv
 from aiogram import executor
 from aiogram.types import Message
 
-from avbot import bot, dp
+from avbot import bot, dp, mem
 from keyboards import ButtonText, Keyboards
 from lang import i18n
 from post import PostsFiltration
@@ -32,12 +32,25 @@ async def h__start(msg: Message):
 
 @dp.message_handler(text=ButtonText.country_georgia)
 async def h__any__country_georgia(msg: Message):
+    await mem.update_bucket(user=msg.from_user.id, country='ge')
+    await msg.answer(_("Выберите язык"), reply_markup=Keyboards.ge_lang_selection)
+
+
+@dp.message_handler(text=ButtonText.lang_georgian)
+async def h__any__lang_georgian(msg: Message):
     await i18n.set_locale(msg.from_user, 'ka')
-    await msg.answer('[что-то на грузинском (или и тут нужна мультиязычность?)]', reply_markup=Keyboards.start)
+    await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start)
+
+
+@dp.message_handler(text=ButtonText.lang_russian)
+async def h__any__lang_russian(msg: Message):
+    await i18n.set_locale(msg.from_user, 'ru')
+    await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start)
 
 
 @dp.message_handler(text=ButtonText.country_ukraine)
 async def h__any__country_ukraine(msg: Message):
+    await mem.update_bucket(user=msg.from_user.id, country='ua')
     await i18n.set_locale(msg.from_user, 'ru')
     await msg.answer('Вы выбрали Украину.', reply_markup=Keyboards.start)
 
