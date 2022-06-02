@@ -1,3 +1,4 @@
+import logging
 from typing import Union, Any
 
 import aiohttp
@@ -15,7 +16,7 @@ async def _query(slug: str, *, country: str = None, locale: str = None, **params
     if locale is None:
         locale = i18n.ctx_locale.get()
 
-    print(slug, params)
+    logging.log(logging.DEBUG, f'{slug}?{params}')
 
     if country == 'ua':
         url = 'https://avezor.com/newapi/v1'
@@ -34,19 +35,19 @@ async def _query(slug: str, *, country: str = None, locale: str = None, **params
             return await resp.json()
 
 
-async def get_regions() -> list[tuple[int, str]]:
+async def get_areas() -> list[tuple[int, str]]:
     return [(x['id'], x['name']) for x in await _query('get_areas')]
 
 
-async def get_districts(region_id: int) -> list[tuple[int, str]]:
-    return [(x['id'], x['name']) for x in await _query('get_child_regions', parent_region=region_id)]
+async def get_regions(area_id: int) -> list[tuple[int, str]]:
+    return [(x['id'], x['name']) for x in await _query('get_child_regions', parent_region=area_id)]
 
 
 async def get_actions() -> list[tuple[int, str]]:
     return [(x['id'], x['name']) for x in await _query('get_actions')]
 
 
-async def get_property_types(cat: str = None) -> list[tuple[int, str]]:
+async def get_nl_types(cat: str = None) -> list[tuple[int, str]]:
     if cat is None:
         return [(x['id'], x['name']) for x in await _query('get_nl_types')]
     else:

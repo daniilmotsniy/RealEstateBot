@@ -3,7 +3,7 @@ from typing import Sequence, Union
 
 from aiogram.types import Message, User, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
-import wp_api
+import newapi
 from avbot import dp, mem, bot
 from keyboards import ButtonText
 from lang import i18n
@@ -51,31 +51,31 @@ def _get_currency(bucket: dict) -> str:
     return 'гривне' if bucket['deal_type'] == 180 else 'долларах'
 
 
-async def p__region():
-    regions = await wp_api.get_regions()
+async def p__area():
+    areas = await newapi.get_areas()
 
-    return {'text': _('Выберите область:️'), 'reply_markup': create_dynamic_inline_keyboard(regions, 2, 'f/region')}
+    return {'text': _('Выберите область:️'), 'reply_markup': create_dynamic_inline_keyboard(areas, 2, 'f/area')}
 
 
-async def p__district(slug: int = None):
+async def p__region(slug: int = None):
     if slug is None:
         bucket = await mem.get_bucket(user=User.get_current().id)
 
-        slug = bucket['region']
+        slug = bucket['area']
 
-    districts = [(_id, name) for _id, name in await wp_api.get_districts(slug) if name != 'all']
+    regions = [(_id, name) for _id, name in await newapi.get_regions(slug) if name != 'all']
 
-    return _dict(_("Выберите город:"), districts, 'f/district', back=True)
+    return _dict(_("Выберите город:"), regions, 'f/region', back=True)
 
 
-async def p__action_type():
-    action_types = await wp_api.get_actions()
+async def p__actions():
+    actions = await newapi.get_actions()
 
-    return _dict(_("Что Вас интересует?"), action_types, 'f/actionType', back=True)
+    return _dict(_("Что Вас интересует?"), actions, 'f/actions', back=True)
 
 
 async def p__post_type():
-    cat_types = await wp_api.get_property_types()
+    cat_types = await newapi.get_nl_types()
 
     return _dict(_("Выберите категорию:"), cat_types, 'f/postType', back=True)
 
@@ -86,7 +86,7 @@ async def p__prop_type(slug: int = None):
 
         slug = bucket['post_type']
 
-    types = await wp_api.get_property_types(slug)
+    types = await newapi.get_nl_types(slug)
 
     return _dict(_("Выберите тип объекта:"), types, 'f/propType', back=True)
 
@@ -105,9 +105,9 @@ async def p__wards(region_id: int = None):
     bucket = await mem.get_bucket(user=User.get_current().id)
 
     if region_id is None:
-        region_id = bucket['district']
+        region_id = bucket['region']
 
-    cat_types = await wp_api.get_wards(region_id)
+    cat_types = await newapi.get_wards(region_id)
 
     wards = bucket.get('wards', [])
 
@@ -119,39 +119,39 @@ async def p__wards(region_id: int = None):
 async def h__any__change_cohort(msg: Message):
     await mem.update_bucket(user=msg.from_user.id, query_formed=False)
 
-    await msg.answer(**await p__region())
+    await msg.answer(**await p__area())
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith('f/area/'))
+async def q__any__f_area(query: CallbackQuery):
+    area_id = int(query.data.removeprefix('f/area/'))
+
+    await mem.update_bucket(user=query.from_user.id, area=area_id)
+
+    await _edit(query, ** await p__region(area_id))
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/region/'))
 async def q__any__f_region(query: CallbackQuery):
-    slug = int(query.data.removeprefix('f/region/'))
+    s_slug = query.data.removeprefix('f/region/')
 
-    await mem.update_bucket(user=query.from_user.id, region=slug)
+    if s_slug == 'back':
+        await _edit(query, **await p__area())
+        return
 
-    await _edit(query, ** await p__district(slug))
+    region_id = int(s_slug)
+
+    await mem.update_bucket(user=query.from_user.id, region=region_id)
+
+    await _edit(query, **await p__actions())
 
 
-@dp.callback_query_handler(lambda c: c.data.startswith('f/district/'))
-async def q__any__f_district(query: CallbackQuery):
-    s_slug = query.data.removeprefix('f/district/')
+@dp.callback_query_handler(lambda c: c.data.startswith('f/actions/'))
+async def q__any__f_actions(query: CallbackQuery):
+    s_slug = query.data.removeprefix('f/actions/')
 
     if s_slug == 'back':
         await _edit(query, **await p__region())
-        return
-
-    slug = int(s_slug)
-
-    await mem.update_bucket(user=query.from_user.id, district=slug)
-
-    await _edit(query, **await p__action_type())
-
-
-@dp.callback_query_handler(lambda c: c.data.startswith('f/actionType/'))
-async def q__any__f_action_type(query: CallbackQuery):
-    s_slug = query.data.removeprefix('f/actionType/')
-
-    if s_slug == 'back':
-        await _edit(query, **await p__district())
         return
 
     slug = int(s_slug)
@@ -166,7 +166,7 @@ async def q__any__f_post_type(query: CallbackQuery):
     s_slug = query.data.removeprefix('f/postType/')
 
     if s_slug == 'back':
-        await _edit(query, **await p__action_type())
+        await _edit(query, **await p__actions())
         return
 
     slug = int(s_slug)
@@ -239,7 +239,7 @@ async def q__any__f_ward(query: CallbackQuery):
     bucket = await mem.get_bucket(user=query.from_user.id)
 
     if slug == 'all':
-        all_ward_ids = [k for k, v in await wp_api.get_wards(bucket['district'])]
+        all_ward_ids = [k for k, v in await newapi.get_wards(bucket['region'])]
 
         if set(bucket.get('wards', ())) == set(all_ward_ids):
             wards = []
@@ -250,7 +250,7 @@ async def q__any__f_ward(query: CallbackQuery):
 
     await mem.update_bucket(user=query.from_user.id, wards=wards)
 
-    await _edit(query, **await p__wards(bucket['district']))
+    await _edit(query, **await p__wards(bucket['region']))
 
 
 async def _query_amount(query: CallbackQuery):
@@ -303,7 +303,7 @@ async def h__any__amount(msg: Message):
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/checkAmount/'))
-async def q__any__f_district(query: CallbackQuery):
+async def q__any__f_check_amount(query: CallbackQuery):
     await query.answer()
 
     slug = query.data.removeprefix('f/checkAmount/')

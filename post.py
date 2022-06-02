@@ -7,7 +7,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from avbot import mem
 from lang import i18n
-from wp_api import get_estate
+from newapi import get_estate
 
 _ = __ = i18n.gettext
 
