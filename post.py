@@ -1,4 +1,5 @@
 import io
+import typing
 from typing import List
 
 import requests
@@ -19,33 +20,19 @@ class Post:
 
     CONTACT_LINK = 'https://t.me/avezor'
 
-    def __init__(self, estate_id: str, locale: str):
-        def get_taxonomy(api: str):
-            return next(iter(requests.get(f'{api}={estate_id}', verify=False).json())).get('name')
-
-        api_prefix = 'https://avezor.com/wp-json/wp/v2/'
-        if locale == 'ka':
-            api_prefix = 'https://avezor.ge/wp-json/wp/v2/'
-
-        estate_api = api_prefix + 'estate_property'
-        region_api = api_prefix + 'property_county_state?post'
-        city_api = api_prefix + 'property_city?post'
-        district_api = api_prefix + 'property_area?post'
-
-        property_data = requests.get(f'{estate_api}/{estate_id}', verify=False).json()
+    def __init__(self, property_data: dict):
         self._post_id = property_data.get('mls')
         self._name = property_data.get('title')['rendered']
         self._address = property_data.get('property_address')
-        self._region = get_taxonomy(region_api)
-        self._city = get_taxonomy(city_api)
-        self._district = get_taxonomy(district_api)
+        self._region = property_data.get('')
+        self._city = property_data.get('')
+        self._district = property_data.get('')
         self._area = property_data.get('property_size')
         self._rooms = property_data.get('property_rooms')
         self._floor = property_data.get('floors')
         self._price = f"{property_data.get('property_price')} {property_data.get('property_label_before')}"
         self._link = property_data.get('link')
-
-        photo_data_link = next(iter(property_data['_links'].get('wp:attachment'))).get('href')
+        photo_data_link = property_data['photo'].get('')
         self._photo = self.convert_photo(photo_data_link)
 
     def get_buttons(self) -> InlineKeyboardMarkup:
@@ -90,32 +77,37 @@ class PostsFiltration:
         return bucket
 
     async def find_estate(self) -> List[Post]:
-        results = list()
         criteria = await self.get_criteria()
         if not criteria:
             return []
+        if not criteria.get('query_formed', False):
+            return []
+
+        locale = criteria.get('locale')
+        # Область
+        area = criteria.get('area')
+        # Город
+        region = criteria.get('region')
+        # Аренда/Продажа
+        action = criteria.get('action')
+        # Квартира/Дом/Гостинка/...
+        property_type = criteria.get('property_type')
+        # Комнаты
+        rooms_counts: typing.List[int] = criteria.get('rooms_counts')
+        # Районы города
+        wards: typing.List[int] = criteria.get('wards')
+        price_min = criteria.get('amount_min')
+        price_max = criteria.get('amount_max')
+
         shown_ids = criteria.get('shown_ids') or list()
-        all_objects = await get_estate()  # TODO newapi
-        for obj in all_objects:
-            if obj['id'] in shown_ids:
+        # TODO new api
+        all_properties = await get_estate()
+        results: typing.List[Post] = list()
+        for property in all_properties:
+            property_id = property['id']
+            if property_id in shown_ids:
                 continue
-            price = int(obj['property_price'])
-            rooms = int(obj['property_rooms'])
-            region = obj.get('property_county_state')
-            deal_type = obj.get('property_action_category')
-            if criteria.get('amount_min') and criteria.get('amount_max'):
-                if criteria['amount_min'] >= price or criteria['amount_max'] <= price:
-                    continue
-            if rooms > 0 and criteria.get('room_counts'):
-                if rooms not in criteria['room_counts']:
-                    continue
-            if criteria.get('region') and len(region) > 0:
-                if region[0] != criteria['region']:
-                    continue
-            if criteria.get('deal_type') and len(deal_type) > 0:
-                if deal_type[0] != criteria['deal_type']:
-                    continue
-            results.append(Post(obj['id'], criteria['locale']))
-            shown_ids.append(obj['id'])
+            results.append(Post(property['id']))
+            shown_ids.append(property_id)
         await mem.update_bucket(user=self._user_id, shown_ids=shown_ids)
         return results
