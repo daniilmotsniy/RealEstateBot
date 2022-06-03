@@ -1,9 +1,46 @@
-## Real estate notifier 
+# Real estate notifier for "Avezor"
 
 ## Local setup
 
 - `pip install -r requirements.txt`
+- `pip install "pymongo[srv]"`
 - set `BOT_TOKEN` env var
+- set `MONGODB_URL` env var
 - `pybabel extract --input-dirs=. --ignore-dirs=venv -o locales/bot.pot --version=2.2 --project=AvezorBot -k __:1,2 && pybabel update -d locales -D bot -i locales/bot.pot`
 - `pybabel compile -d locales -D bot`
-- run `run.py`
+- run `python run.py`
+
+## Docker setup
+
+Fill .env file, then
+use `docker-compose up` or `docker build .`
+
+## Deploy
+
+ This workflow will build and push a new container image to Amazon ECR,
+ and then will deploy a new task definition to Amazon ECS, when there is a push to the master branch.
+
+ To use this workflow, you will need to complete the following set-up steps:
+
+ 1. Create an ECR repository to store your images.
+    For example: `aws ecr create-repository --repository-name my-ecr-repo --region us-east-2`.
+    Replace the value of the `ECR_REPOSITORY` environment variable in the workflow below with your repository's name.
+    Replace the value of the `AWS_REGION` environment variable in the workflow below with your repository's region.
+
+ 2. Create an ECS task definition, an ECS cluster, and an ECS service.
+    For example, follow the Getting Started guide on the ECS console:
+      https://us-east-2.console.aws.amazon.com/ecs/home?region=us-east-2#/firstRun
+    Replace the value of the `ECS_SERVICE` environment variable in the workflow below with the name you set for the Amazon ECS service.
+    Replace the value of the `ECS_CLUSTER` environment variable in the workflow below with the name you set for the cluster.
+
+ 3. Store your ECS task definition as a JSON file in your repository.
+    The format should follow the output of `aws ecs register-task-definition --generate-cli-skeleton`.
+    Replace the value of the `ECS_TASK_DEFINITION` environment variable in the workflow below with the path to the JSON file.
+    Replace the value of the `CONTAINER_NAME` environment variable in the workflow below with the name of the container
+    in the `containerDefinitions` section of the task definition.
+
+ 4. Store an IAM user access key in GitHub Actions secrets named `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+    See the documentation for each action used below for the recommended IAM policies for this IAM user,
+    and best practices on handling the access key credentials.
+    
+ 5. Add `BOT_TOKEN` and `MONGODB_URL` to GitHub action secrets
