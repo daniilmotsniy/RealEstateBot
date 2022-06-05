@@ -327,6 +327,14 @@ async def q__any__f_check_amount(query: CallbackQuery):
 async def _show_results(query: CallbackQuery):
     await query.message.answer("Вот, что я нашел по Вашему запросу.\nМы Вас запомнили. Ждите 22:00. 😈")
     posts = await PostsFiltration(query.from_user.id).find_estate()
+    posts_len = len(posts)
+    # TODO fix text
+    found_text = f'I have found {posts_len} posts!'
+    if posts_len > 0:
+        found_text += ' '
+        found_text += 'Wait, I am sending ...'
+    await bot.send_message(query.message.chat.id, found_text)
+    # TODO add pagination (step 20)
     for post in posts:
         await bot.send_photo(query.message.chat.id, post.get_photo_url(),
                              post.get_description(), reply_markup=post.get_buttons())

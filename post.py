@@ -65,6 +65,7 @@ class Post:
     @staticmethod
     def convert_photo(photo_data_link: str) -> memoryview:
         try:
+            # TODO fix photo
             img = Image.open(requests.get(photo_data_link, stream=True).raw)
             photo_buffer = io.BytesIO()
             img.save(photo_buffer, format='JPEG', quality=75)
