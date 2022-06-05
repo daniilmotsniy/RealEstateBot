@@ -176,6 +176,8 @@ async def q__any__f_post_type(query: CallbackQuery):
     if slug == 178 or slug == 279:  # housing or commercial
         await _edit(query, **await p__prop_type(slug))
     else:
+        await mem.update_bucket(user=query.from_user.id, property_type=None)
+
         await _edit(query, **await p__wards())
 
 
@@ -238,15 +240,15 @@ async def q__any__f_ward(query: CallbackQuery):
 
     bucket = await mem.get_bucket(user=query.from_user.id)
 
-    if slug == 'all':
-        all_ward_ids = [k for k, v in await newapi.get_wards(bucket['region'])]
+    all_ward_ids = [k for k, v in await newapi.get_wards(bucket['region'])]
 
+    if slug == 'all':
         if set(bucket.get('wards', ())) == set(all_ward_ids):
             wards = []
         else:
             wards = all_ward_ids
     else:
-        wards = list(set(bucket.get('wards', ())) ^ {int(slug)})
+        wards = list((set(bucket.get('wards', ())) ^ {int(slug)}) & set(all_ward_ids))
 
     await mem.update_bucket(user=query.from_user.id, wards=wards)
 
@@ -320,21 +322,41 @@ async def q__any__f_check_amount(query: CallbackQuery):
         await mem.update_bucket(user=query.from_user.id, query_formed=True)
 
         await _show_results(query)
+    elif slug == 'back':
+        await _edit(query, **await p__wards())
     else:
         raise ValueError('Unknown action')
 
 
 async def _show_results(query: CallbackQuery):
-    await query.message.answer("Вот, что я нашел по Вашему запросу.\nМы Вас запомнили. Ждите 22:00. 😈")
+    msg = query.message
+    await msg.answer(_("Вот, что я нашел по Вашему запросу.\nМы Вас запомнили. Ждите 22:00. 😈"))
     posts = await PostsFiltration(query.from_user.id).find_estate()
     posts_len = len(posts)
-    # TODO fix text
-    found_text = f'I have found {posts_len} posts!'
-    if posts_len > 0:
-        found_text += ' '
-        found_text += 'Wait, I am sending ...'
-    await bot.send_message(query.message.chat.id, found_text)
-    # TODO add pagination (step 20)
-    for post in posts:
-        await bot.send_photo(query.message.chat.id, post.get_photo_url(),
-                             post.get_description(), reply_markup=post.get_buttons())
+    if posts_len:
+        await msg.answer(__("I have found {posts_len} post! Wait, I am sending...", "I have found {posts_len} posts! Wait, I am sending...").format(posts_len=posts_len))
+    else:
+        await msg.answer(_("I have not found any posts. Try later or use different filters."))
+    for post in posts[:20]:
+        await msg.answer_photo(post.get_photo_url(), post.get_description(), reply_markup=post.get_buttons())
+
+    if posts_len > 20:
+        await msg.answer(_("Show more posts"), reply_markup=InlineKeyboardMarkup(1, [[InlineKeyboardButton(_("Показать еще"), callback_data='f/pagination/20')]]))
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith('f/pagination/'))
+async def q__any__f_check_amount(query: CallbackQuery):
+    await query.answer()
+
+    shown = int(query.data.removeprefix('f/pagination/'))
+
+    posts = await PostsFiltration(query.from_user.id).find_estate()
+
+    msg = query.message
+
+    for post in posts[shown:shown + 20]:
+        await msg.answer_photo(post.get_photo_url(), post.get_description(), reply_markup=post.get_buttons())
+
+    if shown + 20 < len(posts):
+        await msg.answer(_("Show more posts"), reply_markup=InlineKeyboardMarkup(1, [[InlineKeyboardButton(_("Показать еще"), callback_data=f'f/pagination/{shown + 20}')]]))
+
