@@ -21,7 +21,7 @@ ___ = i18n.lazy_gettext
 scheduler = Scheduler(
     PeriodicDailyText(1, '22:00', ___('nightSpam')),
     PeriodicDailyText(5, '18:00', ___('daySpam')),
-    PeriodicPostSpammer(1),
+    PeriodicPostSpammer(3),
 )
 
 
@@ -73,6 +73,12 @@ async def h__jobs(msg: Message):
 @dp.message_handler(commands=['send'])
 async def h__send_post(msg: Message):
     posts = await PostsFiltration(msg.from_user.id).find_estate()
+    posts_len = len(posts)
+    found_text = f'I have found {posts_len} posts!'
+    if posts_len > 0:
+        found_text += ' '
+        found_text += 'Wait, I am sending ...'
+    await bot.send_message(msg.chat.id, found_text)
     for post in posts:
         await bot.send_photo(msg.chat.id, post.get_photo_url(),
                              post.get_description(), reply_markup=post.get_buttons())

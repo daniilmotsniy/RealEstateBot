@@ -11,6 +11,7 @@ from lang import i18n
 
 async def _query(slug: str, *, country: str = None, locale: str = None, **params: Union[str, int]) -> Union[dict, list]:
     if country is None:
+        # FIXME get_current does not work for periodic task
         country = (await mem.get_bucket(user=User.get_current().id))['country']
 
     if locale is None:
