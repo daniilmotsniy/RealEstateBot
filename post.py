@@ -97,11 +97,9 @@ class PostsFiltration:
         # Rent/Sale
         deal_type = criteria.get('action')
         # Apartment/House/Hotel/...
-        # TODO only post or property type
         property_type = criteria.get('property_type')
         post_type = criteria.get('post_type')
-        estate_type = post_type
-
+        estate_type = post_type or property_type
         rooms_counts: typing.List[int] = criteria.get('rooms_counts')
         rooms_from, rooms_to = self.count_rooms(rooms_counts)
         # City districts
@@ -111,6 +109,7 @@ class PostsFiltration:
 
         shown_ids = criteria.get('shown_ids') or list()
         all_properties = await get_estate(
+            user_id=self._user_id,
             lang=locale,
             deal_type=deal_type,
             city=city,

@@ -6,16 +6,17 @@ from aiogram.types import User
 
 from avbot import mem
 
-from lang import i18n
 
+async def _query(slug: str, *, country: str = None, locale: str = None, user_id: int = None,
+                 **params: Union[str, int]) -> Union[dict, list]:
+    if not user_id:
+        user_id = User.get_current().id
 
-async def _query(slug: str, *, country: str = None, locale: str = None, **params: Union[str, int]) -> Union[dict, list]:
     if country is None:
-        # FIXME get_current does not work for periodic task
-        country = (await mem.get_bucket(user=User.get_current().id))['country']
+        country = (await mem.get_bucket(user=user_id))['country']
 
     if locale is None:
-        locale = i18n.ctx_locale.get()
+        locale = (await mem.get_bucket(user=user_id))['locale']
 
     logging.log(logging.DEBUG, f'{slug}?{params}')
 

@@ -17,7 +17,7 @@ class PeriodicTask(ABC):
     DO_NOT_DISTURB_AFTER = 22
 
     def __init__(self):
-        self.chat_ids: typing.List[tuple[int, str, str]] = self.find_users()
+        self.user_ids: typing.List[tuple[int, str, str]] = self.find_users()
         self.country_2_tz = {
             'ua': 'Etc/GMT-3',
             'ge': 'Etc/GMT-4',
@@ -49,10 +49,10 @@ class PeriodicTask(ABC):
         return now.hour >= self.DO_NOT_DISTURB_AFTER
 
     async def send(self):
-        for chat_id, locale, country in self.chat_ids:
+        for user_id, locale, country in self.user_ids:
             i18n.ctx_locale.set(locale)
             await self.get_bot_coroutine(
-                chat_id,
+                user_id,
                 do_not_disturb_mode=self.do_not_disturb_mode(country)
             )
 
@@ -68,8 +68,8 @@ class PeriodicDailyText(PeriodicTask):
         self.time = time
         self.value = value
 
-    async def get_bot_coroutine(self, chat_id: int, do_not_disturb_mode: bool = False):
-        await Bot.get_current().send_message(chat_id, self.value, disable_notification=do_not_disturb_mode)
+    async def get_bot_coroutine(self, user_id: int, do_not_disturb_mode: bool = False):
+        await Bot.get_current().send_message(user_id, self.value, disable_notification=do_not_disturb_mode)
 
     def every(self):
         aioschedule.every(interval=self.interval).days.at(self.time).do(self.send)
@@ -80,10 +80,10 @@ class PeriodicPostSpammer(PeriodicTask):
         super().__init__()
         self.interval: int = interval
 
-    async def get_bot_coroutine(self, chat_id: int, do_not_disturb_mode: bool = False):
-        posts: typing.List[Post] = await PostsFiltration(chat_id).find_estate()
+    async def get_bot_coroutine(self, user_id: int, do_not_disturb_mode: bool = False):
+        posts: typing.List[Post] = await PostsFiltration(user_id).find_estate()
         for post in posts:
-            await Bot.get_current().send_photo(chat_id, post.get_photo_url(),
+            await Bot.get_current().send_photo(user_id, post.get_photo_url(),
                                                post.get_description(),
                                                reply_markup=post.get_buttons(),
                                                disable_notification=do_not_disturb_mode)
