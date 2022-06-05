@@ -130,7 +130,7 @@ class PostsFiltration:
             if property_id in shown_ids:
                 continue
             results.append(Post(property_data))
-            # shown_ids.append(property_id)
+            shown_ids.append(property_id)
         await mem.update_bucket(user=self._user_id, shown_ids=shown_ids)
         return results
 
