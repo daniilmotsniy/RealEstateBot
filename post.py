@@ -1,4 +1,5 @@
 import io
+import logging
 import typing
 from typing import List
 
@@ -13,6 +14,13 @@ from newapi import get_estate
 _ = __ = i18n.gettext
 
 
+def return_first_item_if_exists(data: dict, field: str, subfield):
+    value = data.get(field)
+    if value:
+        return next(iter(value)).get(subfield)
+    return None
+
+
 class Post:
     """
     this class converts estate property by given WP API to telegram post
@@ -21,19 +29,18 @@ class Post:
     CONTACT_LINK = 'https://t.me/avezor'
 
     def __init__(self, property_data: dict):
-        self._post_id = property_data.get('mls')
-        self._name = property_data.get('title')['rendered']
-        self._address = property_data.get('property_address')
-        self._region = property_data.get('')
-        self._city = property_data.get('')
-        self._district = property_data.get('')
-        self._area = property_data.get('property_size')
-        self._rooms = property_data.get('property_rooms')
-        self._floor = property_data.get('floors')
-        self._price = f"{property_data.get('property_price')} {property_data.get('property_label_before')}"
+        self._post_id = property_data.get('id')
+        self._name = property_data.get('title')
+        self._address = property_data.get('address')
+        self._region = return_first_item_if_exists(property_data, 'area', 'name')
+        self._city = return_first_item_if_exists(property_data, 'city', 'name')
+        self._district = return_first_item_if_exists(property_data, 'district', 'name')
+        self._area = property_data.get('square')
+        self._rooms = property_data.get('room_count')
+        self._floor = property_data.get('floor')
+        self._price = f"{property_data.get('price')}"
         self._link = property_data.get('link')
-        photo_data_link = property_data['photo'].get('')
-        self._photo = self.convert_photo(photo_data_link)
+        self._photo = self.convert_photo(property_data.get('image'))
 
     def get_buttons(self) -> InlineKeyboardMarkup:
         write_btn = InlineKeyboardButton(_("Написать"), url=self.CONTACT_LINK)
@@ -52,31 +59,32 @@ class Post:
                _('post_Price') + f': {self._price}\n' + \
                _('post_ID') + f': {self._post_id}'
 
-    def get_photo_url(self) -> memoryview:
+    def get_photo_url(self):
         return self._photo
 
     @staticmethod
     def convert_photo(photo_data_link: str) -> memoryview:
-        photo_link = next(iter(
-            requests.get(photo_data_link, verify=False).json()
-        )).get('media_details').get('sizes').get('medium').get('s3').get('url')
-        img = Image.open(requests.get(photo_link, stream=True).raw)
-        photo_buffer = io.BytesIO()
-        img.save(photo_buffer, format='JPEG', quality=75)
-        return photo_buffer.getbuffer()
+        try:
+            img = Image.open(requests.get(photo_data_link, stream=True).raw)
+            photo_buffer = io.BytesIO()
+            img.save(photo_buffer, format='JPEG', quality=75)
+            return photo_buffer.getbuffer()
+        except Exception as e:
+            logging.error(e)
 
 
 class PostsFiltration:
+    MAX_ROOMS = 1000
+    MIN_ROOMS = 0
+    MORE_THAN_4_ROOMS_FLAG = 5
+
     def __init__(self, user_id: int):
         self._user_id: int = user_id
 
-    async def get_criteria(self):
-        bucket = await mem.get_bucket(user=self._user_id)
-        if bucket.get('query_formed') is False:
-            return None
-        return bucket
-
     async def find_estate(self) -> List[Post]:
+        """
+        :return: list of compiled posts for bot
+        """
         criteria = await self.get_criteria()
         if not criteria:
             return []
@@ -84,30 +92,80 @@ class PostsFiltration:
             return []
 
         locale = criteria.get('locale')
-        # Область
-        area = criteria.get('area')
-        # Город
-        region = criteria.get('region')
-        # Аренда/Продажа
-        action = criteria.get('action')
-        # Квартира/Дом/Гостинка/...
+        city = criteria.get('region')
+        # Rent/Sale
+        deal_type = criteria.get('action')
+        # Apartment/House/Hotel/...
+        # TODO only post or property type
         property_type = criteria.get('property_type')
-        # Комнаты
+        post_type = criteria.get('post_type')
+        estate_type = post_type
+
         rooms_counts: typing.List[int] = criteria.get('rooms_counts')
-        # Районы города
+        rooms_from, rooms_to = self.count_rooms(rooms_counts)
+        # City districts
         wards: typing.List[int] = criteria.get('wards')
         price_min = criteria.get('amount_min')
         price_max = criteria.get('amount_max')
 
         shown_ids = criteria.get('shown_ids') or list()
-        # TODO new api
-        all_properties = await get_estate()
+        all_properties = await get_estate(
+            lang=locale,
+            deal_type=deal_type,
+            city=city,
+            estate_type=estate_type,
+            price_from=price_min,
+            price_to=price_max,
+            rooms_from=rooms_from,
+            rooms_to=rooms_to,
+        )
+        if all_properties == 'not found':
+            return []
         results: typing.List[Post] = list()
-        for property in all_properties:
-            property_id = property['id']
+        for property_data in all_properties:
+            property_id = property_data['id']
+            district_id = return_first_item_if_exists(property_data, 'district', 'id')
+            if district_id and not self.is_in_valid_districts(district_id, wards):
+                continue
             if property_id in shown_ids:
                 continue
-            results.append(Post(property['id']))
-            shown_ids.append(property_id)
+            results.append(Post(property_data))
+            # shown_ids.append(property_id)
         await mem.update_bucket(user=self._user_id, shown_ids=shown_ids)
         return results
+
+    async def get_criteria(self):
+        """
+        :return: user criteria for apartments
+        """
+        bucket = await mem.get_bucket(user=self._user_id)
+        if bucket.get('query_formed') is False:
+            return None
+        return bucket
+
+    def count_rooms(self, rooms_counts: typing.List[int]) -> typing.Tuple[int, int]:
+        """
+        :param rooms_counts: list of selected rooms
+        MORE_THAN_4_ROOMS_FLAG means number from estate has more than N rooms
+        :return: rooms min count, rooms max count
+        """
+        if rooms_counts:
+            rooms_from = min(rooms_counts)
+            rooms_to = max(rooms_counts)
+        else:
+            rooms_from = self.MIN_ROOMS
+            rooms_to = self.MAX_ROOMS
+
+        if rooms_to == self.MORE_THAN_4_ROOMS_FLAG:
+            rooms_from = self.MORE_THAN_4_ROOMS_FLAG - 1
+            rooms_to = self.MAX_ROOMS
+        return rooms_from, rooms_to
+
+    @staticmethod
+    def is_in_valid_districts(district_id: int, wards: typing.List[int]) -> bool:
+        """
+        :return: if apartment district is in selected districts
+        """
+        if district_id not in wards:
+            return False
+        return True
