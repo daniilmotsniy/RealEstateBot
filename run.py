@@ -80,8 +80,9 @@ async def h__send_post(msg: Message):
         found_text += 'Wait, I am sending ...'
     await bot.send_message(msg.chat.id, found_text)
     for post in posts:
-        await bot.send_photo(msg.chat.id, post.get_photo_url(),
-                             post.get_description(), reply_markup=post.get_buttons())
+        with await post.get_photo_io() as photo:
+            await bot.send_photo(msg.chat.id, photo,
+                                 post.get_description(), reply_markup=post.get_buttons())
 
 
 @dp.message_handler()

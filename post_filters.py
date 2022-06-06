@@ -1,13 +1,14 @@
+import asyncio
 import itertools
 from typing import Sequence, Union
 
 from aiogram.types import Message, User, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 import newapi
-from avbot import dp, mem, bot
+from avbot import dp, mem
 from keyboards import ButtonText
 from lang import i18n
-from post import PostsFiltration
+from post import PostsFiltration, Post
 
 _ = __ = i18n.gettext
 
@@ -328,6 +329,14 @@ async def q__any__f_check_amount(query: CallbackQuery):
         raise ValueError('Unknown action')
 
 
+async def _show_posts(msg: Message, posts: Sequence[Post]):
+    for post, photo in zip(posts, await asyncio.gather(*(post.get_photo_io() for post in posts))):
+        try:
+            await msg.answer_photo(photo, post.get_description(), reply_markup=post.get_buttons())
+        finally:
+            photo.close()
+
+
 async def _show_results(query: CallbackQuery):
     msg = query.message
     await msg.answer(_("Вот, что я нашел по Вашему запросу.\nМы Вас запомнили. Ждите 22:00. 😈"))
@@ -337,8 +346,8 @@ async def _show_results(query: CallbackQuery):
         await msg.answer(__("I have found {posts_len} post! Wait, I am sending...", "I have found {posts_len} posts! Wait, I am sending...").format(posts_len=posts_len))
     else:
         await msg.answer(_("I have not found any posts. Try later or use different filters."))
-    for post in posts[:20]:
-        await msg.answer_photo(post.get_photo_url(), post.get_description(), reply_markup=post.get_buttons())
+
+    await _show_posts(msg, posts[:20])
 
     if posts_len > 20:
         await msg.answer(_("Show more posts"), reply_markup=InlineKeyboardMarkup(1, [[InlineKeyboardButton(_("Показать еще"), callback_data='f/pagination/20')]]))
@@ -354,8 +363,7 @@ async def q__any__f_check_amount(query: CallbackQuery):
 
     msg = query.message
 
-    for post in posts[shown:shown + 20]:
-        await msg.answer_photo(post.get_photo_url(), post.get_description(), reply_markup=post.get_buttons())
+    await _show_posts(msg, posts[shown:shown + 20])
 
     if shown + 20 < len(posts):
         await msg.answer(_("Show more posts"), reply_markup=InlineKeyboardMarkup(1, [[InlineKeyboardButton(_("Показать еще"), callback_data=f'f/pagination/{shown + 20}')]]))

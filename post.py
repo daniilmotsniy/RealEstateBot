@@ -1,10 +1,9 @@
 import io
-import logging
 import typing
-from typing import List
+from typing import List, BinaryIO
 
-import requests
-from PIL import Image
+import aiohttp
+from PIL import Image, UnidentifiedImageError
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from avbot import mem
@@ -40,7 +39,7 @@ class Post:
         self._floor = property_data.get('floor')
         self._price = f"{property_data.get('price')}"
         self._link = property_data.get('link')
-        self._photo = self.convert_photo(property_data.get('image'))
+        self._photo_link = property_data.get('image')
 
     def get_buttons(self) -> InlineKeyboardMarkup:
         write_btn = InlineKeyboardButton(_("Написать"), url=self.CONTACT_LINK)
@@ -59,19 +58,39 @@ class Post:
                _('post_Price') + f': {self._price}\n' + \
                _('post_ID') + f': {self._post_id}'
 
-    def get_photo_url(self):
-        return self._photo
+    async def get_photo_io(self) -> BinaryIO:
+        return await self.convert_photo(self._photo_link)
 
     @staticmethod
-    def convert_photo(photo_data_link: str) -> memoryview:
+    async def convert_photo(photo_data_link: str) -> BinaryIO:
+        telegram_max_dimensions = 10_000
+
         try:
-            # TODO fix photo
-            img = Image.open(requests.get(photo_data_link, stream=True).raw)
-            photo_buffer = io.BytesIO()
-            img.save(photo_buffer, format='JPEG', quality=75)
-            return photo_buffer.getbuffer()
-        except Exception as e:
-            logging.error(e)
+            async with aiohttp.ClientSession() as session:
+                async with session.get(photo_data_link) as resp:
+                    buffer1 = io.BytesIO(await resp.read())
+
+            img = Image.open(buffer1)
+
+            if img.width + img.height <= telegram_max_dimensions:
+                buffer1.seek(0)
+
+                return buffer1
+
+            f = telegram_max_dimensions / (img.width + img.height)
+            img.thumbnail((int(img.width * f), int(img.height * f)))
+
+            buffer2 = io.BytesIO()
+
+            img.save(buffer2, format='JPEG', quality=75)
+
+            img.close()
+            buffer1.close()
+            buffer2.seek(0)
+
+            return buffer2
+        except UnidentifiedImageError:
+            return open('no_photo.jpg', 'rb')
 
 
 class PostsFiltration:
