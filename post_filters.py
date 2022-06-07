@@ -336,7 +336,7 @@ async def _show_posts(msg: Message, posts: Sequence[Post]):
 
 async def _show_results(query: CallbackQuery):
     msg = query.message
-    await msg.answer(_("Вот, что я нашел по Вашему запросу.\nМы Вас запомнили. Ждите 22:00. 😈"))
+    await msg.answer(_("Вот, что я нашел по Вашему запросу."))
     posts = await PostsFiltration(query.from_user.id).find_estate()
     posts_len = len(posts)
     if posts_len:

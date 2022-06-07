@@ -4,10 +4,9 @@ from os import getenv
 from aiogram import executor
 from aiogram.types import Message
 
-from avbot import bot, dp, mem
+from avbot import dp, mem
 from keyboards import ButtonText, Keyboards
 from lang import i18n
-from post import PostsFiltration
 from tasks import Scheduler, PeriodicDailyText, PeriodicPostSpammer
 
 # noinspection PyUnresolvedReferences
@@ -68,21 +67,6 @@ async def h__add_object(msg: Message):
 @dp.message_handler(text=ButtonText.jobs)
 async def h__jobs(msg: Message):
     await msg.answer(_('buttonReply_jobs'), reply_markup=Keyboards.start)
-
-
-@dp.message_handler(commands=['send'])
-async def h__send_post(msg: Message):
-    posts = await PostsFiltration(msg.from_user.id).find_estate()
-    posts_len = len(posts)
-    found_text = f'I have found {posts_len} posts!'
-    if posts_len > 0:
-        found_text += ' '
-        found_text += 'Wait, I am sending ...'
-    await bot.send_message(msg.chat.id, found_text)
-    for post in posts:
-        with await post.get_photo_io() as photo:
-            await bot.send_photo(msg.chat.id, photo,
-                                 post.get_description(), reply_markup=post.get_buttons())
 
 
 @dp.message_handler()
