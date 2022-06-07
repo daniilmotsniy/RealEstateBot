@@ -83,10 +83,10 @@ class PeriodicPostSpammer(PeriodicTask):
     async def get_bot_coroutine(self, user_id: int, do_not_disturb_mode: bool = False):
         posts: typing.List[Post] = await PostsFiltration(user_id).find_estate()
         for post in posts:
-            await Bot.get_current().send_photo(user_id, post.get_photo_url(),
-                                               post.get_description(),
-                                               reply_markup=post.get_buttons(),
-                                               disable_notification=do_not_disturb_mode)
+            with await post.get_photo_io() as photo:
+                await Bot.get_current().send_photo(user_id, photo, post.get_description(),
+                                                   reply_markup=post.get_buttons(),
+                                                   disable_notification=do_not_disturb_mode)
 
     def every(self):
         aioschedule.every(interval=self.interval).minutes.do(self.send)

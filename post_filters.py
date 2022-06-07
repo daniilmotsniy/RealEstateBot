@@ -1,13 +1,15 @@
+import asyncio
 import itertools
 from typing import Sequence, Union
 
+from aiogram.dispatcher.handler import CancelHandler
 from aiogram.types import Message, User, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 import newapi
 from avbot import dp, mem
 from keyboards import ButtonText
 from lang import i18n
-from post import PostsFiltration
+from post import PostsFiltration, Post
 
 _ = __ = i18n.gettext
 
@@ -122,6 +124,28 @@ async def h__any__change_cohort(msg: Message):
     await msg.answer(**await p__area())
 
 
+@dp.callback_query_handler(regexp='^f/[a-zA-z]+/back$')
+async def q__back(query: CallbackQuery):
+    slug = query.data.split('/')[1]
+
+    if slug == 'region':
+        await _edit(query, **await p__area())
+    elif slug == 'actions':
+        await _edit(query, **await p__region())
+    elif slug == 'postType':
+        await _edit(query, **await p__actions())
+    elif slug == 'propType':
+        await _edit(query, **await p__post_type())
+    elif slug == 'roomCounts':
+        await _edit(query, **await p__prop_type())
+    elif slug == 'ward':
+        await _edit(query, **await p__post_type())
+    elif slug == 'checkAmount':
+        await _edit(query, **await p__wards())
+    else:
+        raise CancelHandler()
+
+
 @dp.callback_query_handler(lambda c: c.data.startswith('f/area/'))
 async def q__any__f_area(query: CallbackQuery):
     area_id = int(query.data.removeprefix('f/area/'))
@@ -135,10 +159,6 @@ async def q__any__f_area(query: CallbackQuery):
 async def q__any__f_region(query: CallbackQuery):
     s_slug = query.data.removeprefix('f/region/')
 
-    if s_slug == 'back':
-        await _edit(query, **await p__area())
-        return
-
     region_id = int(s_slug)
 
     await mem.update_bucket(user=query.from_user.id, region=region_id)
@@ -150,10 +170,6 @@ async def q__any__f_region(query: CallbackQuery):
 async def q__any__f_actions(query: CallbackQuery):
     s_slug = query.data.removeprefix('f/actions/')
 
-    if s_slug == 'back':
-        await _edit(query, **await p__region())
-        return
-
     action_id = int(s_slug)
 
     await mem.update_bucket(user=query.from_user.id, action=action_id)
@@ -164,10 +180,6 @@ async def q__any__f_actions(query: CallbackQuery):
 @dp.callback_query_handler(lambda c: c.data.startswith('f/postType/'))
 async def q__any__f_post_type(query: CallbackQuery):
     s_slug = query.data.removeprefix('f/postType/')
-
-    if s_slug == 'back':
-        await _edit(query, **await p__actions())
-        return
 
     slug = int(s_slug)
 
@@ -185,10 +197,6 @@ async def q__any__f_post_type(query: CallbackQuery):
 async def q__any__f_prop_type(query: CallbackQuery):
     s_slug = query.data.removeprefix('f/propType/')
 
-    if s_slug == 'back':
-        await _edit(query, **await p__post_type())
-        return
-
     slug = int(s_slug)
 
     await mem.update_bucket(user=query.from_user.id, property_type=slug)
@@ -202,10 +210,6 @@ async def q__any__f_prop_type(query: CallbackQuery):
 @dp.callback_query_handler(lambda c: c.data.startswith('f/roomCounts/'))
 async def q__any__f_room_counts(query: CallbackQuery):
     slug = query.data.removeprefix('f/roomCounts/')
-
-    if slug == 'back':
-        await _edit(query, **await p__prop_type())
-        return
 
     if slug == 'next':
         await _edit(query, **await p__wards())
@@ -229,10 +233,6 @@ async def q__any__f_room_counts(query: CallbackQuery):
 @dp.callback_query_handler(lambda c: c.data.startswith('f/ward/'))
 async def q__any__f_ward(query: CallbackQuery):
     slug = query.data.removeprefix('f/ward/')
-
-    if slug == 'back':
-        await _edit(query, **await p__post_type())
-        return
 
     if slug == 'next':
         await _query_amount(query)
@@ -322,10 +322,16 @@ async def q__any__f_check_amount(query: CallbackQuery):
         await mem.update_bucket(user=query.from_user.id, query_formed=True)
 
         await _show_results(query)
-    elif slug == 'back':
-        await _edit(query, **await p__wards())
     else:
         raise ValueError('Unknown action')
+
+
+async def _show_posts(msg: Message, posts: Sequence[Post]):
+    for post, photo in zip(posts, await asyncio.gather(*(post.get_photo_io() for post in posts))):
+        try:
+            await msg.answer_photo(photo, post.get_description(), reply_markup=post.get_buttons())
+        finally:
+            photo.close()
 
 
 async def _show_results(query: CallbackQuery):
@@ -337,8 +343,8 @@ async def _show_results(query: CallbackQuery):
         await msg.answer(__("I have found {posts_len} post! Wait, I am sending...", "I have found {posts_len} posts! Wait, I am sending...").format(posts_len=posts_len))
     else:
         await msg.answer(_("I have not found any posts. Try later or use different filters."))
-    for post in posts[:20]:
-        await msg.answer_photo(post.get_photo_url(), post.get_description(), reply_markup=post.get_buttons())
+
+    await _show_posts(msg, posts[:20])
 
     if posts_len > 20:
         await msg.answer(_("Show more posts"), reply_markup=InlineKeyboardMarkup(1, [[InlineKeyboardButton(_("Показать еще"), callback_data='f/pagination/20')]]))
@@ -354,8 +360,7 @@ async def q__any__f_check_amount(query: CallbackQuery):
 
     msg = query.message
 
-    for post in posts[shown:shown + 20]:
-        await msg.answer_photo(post.get_photo_url(), post.get_description(), reply_markup=post.get_buttons())
+    await _show_posts(msg, posts[shown:shown + 20])
 
     if shown + 20 < len(posts):
         await msg.answer(_("Show more posts"), reply_markup=InlineKeyboardMarkup(1, [[InlineKeyboardButton(_("Показать еще"), callback_data=f'f/pagination/{shown + 20}')]]))
