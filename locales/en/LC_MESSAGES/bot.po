@@ -20,141 +20,141 @@ msgstr ""
 
 #: post.py:45
 msgid "Написать"
-msgstr ""
+msgstr "Contact"
 
 #: post.py:46
 msgid "Подробнее"
-msgstr ""
+msgstr "More"
 
 #: post.py:51
 msgid "post_Address"
-msgstr ""
+msgstr "Address"
 
 #: post.py:52
 msgid "post_District"
-msgstr ""
+msgstr "District"
 
 #: post.py:53
 msgid "post_City"
-msgstr ""
+msgstr "City"
 
 #: post.py:54
 msgid "post_Region"
-msgstr ""
+msgstr "Region"
 
 #: post.py:55
 msgid "post_Area"
-msgstr ""
+msgstr "Area"
 
 #: post.py:56
 msgid "post_Rooms"
-msgstr ""
+msgstr "Rooms"
 
 #: post.py:57
 msgid "post_Floor"
-msgstr ""
+msgstr "Floor"
 
 #: post.py:58
 msgid "post_Price"
-msgstr ""
+msgstr "Price"
 
 #: post.py:59
 msgid "post_ID"
-msgstr ""
+msgstr "ID"
 
 #: post_filters.py:21
 msgid "back"
-msgstr ""
+msgstr "Back"
 
 #: post_filters.py:39
 msgid "unselectAll"
-msgstr ""
+msgstr "Unselect all"
 
 #: post_filters.py:39
 msgid "selectAll"
-msgstr ""
+msgstr "Select all"
 
 #: post_filters.py:40
 msgid "next"
-msgstr ""
+msgstr "Next"
 
 #: post_filters.py:59
-msgid "Выберите область:️"
-msgstr ""
+msgid "Выберите область:"
+msgstr "Choose an area:"
 
 #: post_filters.py:70
 msgid "Выберите город:"
-msgstr ""
+msgstr "Choose a city:"
 
 #: post_filters.py:76
 msgid "Что Вас интересует?"
-msgstr ""
+msgstr "What are you interested in?"
 
 #: post_filters.py:82
 msgid "Выберите категорию:"
-msgstr ""
+msgstr "Select a category:"
 
 #: post_filters.py:93
 msgid "Выберите тип объекта:"
-msgstr ""
+msgstr "Select object type:"
 
 #: post_filters.py:101
 msgid "Сколько должно быть комнат в квартире?"
-msgstr ""
+msgstr "How many rooms should there be in an apartment?"
 
 #: post_filters.py:116
 msgid "Выберите район:"
-msgstr ""
+msgstr "Choose an area:"
 
 #: post_filters.py:304 run.py:74
 msgid "Something's wrong, I can feel it."
-msgstr ""
+msgstr "Something's wrong, I can feel it."
 
 #: post_filters.py:339
 msgid "Вот, что я нашел по Вашему запросу."
-msgstr ""
+msgstr "Here is what I found on your request."
 
 #: post_filters.py:343
 msgid "I have found {posts_len} post! Wait, I am sending..."
 msgid_plural "I have found {posts_len} posts! Wait, I am sending..."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "I have found {posts_len} posts! Wait, I am sending..."
+msgstr[1] "I have found {posts_len} posts! Wait, I am sending..."
 
 #: post_filters.py:345
 msgid "I have not found any posts. Try later or use different filters."
-msgstr ""
+msgstr "I have not found any posts. Try later or use different filters."
 
 #: post_filters.py:350 post_filters.py:366
 msgid "Show more posts"
-msgstr ""
+msgstr "Show more posts"
 
 #: post_filters.py:350 post_filters.py:366
 msgid "Показать еще"
-msgstr ""
+msgstr "Show more"
 
 #: run.py:21
 msgid "nightSpam"
-msgstr ""
+msgstr "It's already late, so as not to disturb you - I will send notifications of new objects without sound))"
 
 #: run.py:22
 msgid "daySpam"
-msgstr ""
+msgstr "No suitable options? Try changing your search criteria."
 
 #: run.py:35
 msgid "Выберите язык"
-msgstr ""
+msgstr "Choose language"
 
 #: run.py:41 run.py:47
 msgid "Язык выбран"
-msgstr ""
+msgstr "Language are chosen"
 
 #: run.py:64
 msgid "buttonReply_addObject"
-msgstr ""
+msgstr "For this you need to follow the link https://avezor.ge, if you do not have an account: enter your name, email, and phone number, registration takes less than a minute, if you already have an account on our site, Just log in to the system and add objects."
 
 #: run.py:69
 msgid "buttonReply_jobs"
-msgstr ""
+msgstr "All available vacancy is https://avezor.com/vakansii/"
 
 #~ msgid "Current language: {lang}."
 #~ msgstr ""

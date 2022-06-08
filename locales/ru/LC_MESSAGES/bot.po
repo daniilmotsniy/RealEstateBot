@@ -69,11 +69,11 @@ msgstr "Вернуться"
 
 #: post_filters.py:39
 msgid "unselectAll"
-msgstr ""
+msgstr "Убрать все"
 
 #: post_filters.py:39
 msgid "selectAll"
-msgstr ""
+msgstr "Выбрать все"
 
 #: post_filters.py:40
 msgid "next"
@@ -109,30 +109,30 @@ msgstr "Выберите район:"
 
 #: post_filters.py:304 run.py:74
 msgid "Something's wrong, I can feel it."
-msgstr ""
+msgstr "Что-то пошло не так..."
 
 #: post_filters.py:339
 msgid "Вот, что я нашел по Вашему запросу."
-msgstr ""
+msgstr "Вот, что я нашел по Вашему запросу."
 
 #: post_filters.py:343
 msgid "I have found {posts_len} post! Wait, I am sending..."
 msgid_plural "I have found {posts_len} posts! Wait, I am sending..."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Посмотреть {posts_len} объекта(ов)"
+msgstr[1] "Посмотреть {posts_len} объекта(ов)"
+msgstr[2] "Посмотреть {posts_len} объекта(ов)"
 
 #: post_filters.py:345
 msgid "I have not found any posts. Try later or use different filters."
-msgstr ""
+msgstr "Я не нашел ни одного поста. Попробуйте позже или используйте другие фильтры."
 
 #: post_filters.py:350 post_filters.py:366
 msgid "Show more posts"
-msgstr ""
+msgstr "Больше постов"
 
 #: post_filters.py:350 post_filters.py:366
 msgid "Показать еще"
-msgstr ""
+msgstr "Показать еще"
 
 #: run.py:21
 msgid "nightSpam"
@@ -146,11 +146,11 @@ msgstr "Нет подходящих вариантов? Попробуйте и�
 
 #: run.py:35
 msgid "Выберите язык"
-msgstr ""
+msgstr "Выберите язык"
 
 #: run.py:41 run.py:47
 msgid "Язык выбран"
-msgstr ""
+msgstr "Язык выбран"
 
 #: run.py:64
 msgid "buttonReply_addObject"

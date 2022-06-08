@@ -20,140 +20,142 @@ msgstr ""
 
 #: post.py:45
 msgid "Написать"
-msgstr ""
+msgstr "ჩაწერე აქ"
 
 #: post.py:46
 msgid "Подробнее"
-msgstr ""
+msgstr "დეტალურად"
 
 #: post.py:51
 msgid "post_Address"
-msgstr ""
+msgstr "მისამართი"
 
 #: post.py:52
 msgid "post_District"
-msgstr ""
+msgstr "ფართობი"
 
 #: post.py:53
 msgid "post_City"
-msgstr ""
+msgstr "ქალაქი"
 
 #: post.py:54
 msgid "post_Region"
-msgstr ""
+msgstr "რეგიონი"
 
 #: post.py:55
 msgid "post_Area"
-msgstr ""
+msgstr "მოედანი"
 
 #: post.py:56
 msgid "post_Rooms"
-msgstr ""
+msgstr "ოთახები"
 
 #: post.py:57
 msgid "post_Floor"
-msgstr ""
+msgstr "სართული"
 
 #: post.py:58
 msgid "post_Price"
-msgstr ""
+msgstr "ფასი"
 
 #: post.py:59
 msgid "post_ID"
-msgstr ""
+msgstr "ID"
 
 #: post_filters.py:21
 msgid "back"
-msgstr ""
+msgstr "უკან"
 
 #: post_filters.py:39
 msgid "unselectAll"
-msgstr ""
+msgstr "წაშალეთ ყველა"
 
 #: post_filters.py:39
 msgid "selectAll"
-msgstr ""
+msgstr "აირჩიე ყველა"
 
 #: post_filters.py:40
 msgid "next"
-msgstr ""
+msgstr "შემდეგი"
 
 #: post_filters.py:59
 msgid "Выберите область:️"
-msgstr ""
+msgstr "აირჩიეთ სფერო:"
 
 #: post_filters.py:70
 msgid "Выберите город:"
-msgstr ""
+msgstr "აირჩიეთ ქალაქი:"
 
 #: post_filters.py:76
 msgid "Что Вас интересует?"
-msgstr ""
+msgstr "რა გაინტერესებთ?"
 
 #: post_filters.py:82
 msgid "Выберите категорию:"
-msgstr ""
+msgstr "აირჩიეთ კატეგორია"
 
 #: post_filters.py:93
 msgid "Выберите тип объекта:"
-msgstr ""
+msgstr "აირჩიეთ ობიექტის ტიპი"
 
 #: post_filters.py:101
 msgid "Сколько должно быть комнат в квартире?"
-msgstr ""
+msgstr "რამდენი ოთახი უნდა იყოს ბინაში?"
 
 #: post_filters.py:116
 msgid "Выберите район:"
-msgstr ""
+msgstr "აირჩიეთ უბანი:"
 
 #: post_filters.py:304 run.py:74
 msgid "Something's wrong, I can feel it."
-msgstr ""
+msgstr "რაღაც არასწორია, ამას ვგრძნობ."
 
 #: post_filters.py:339
 msgid "Вот, что я нашел по Вашему запросу."
-msgstr ""
+msgstr "აი, რა ვიპოვე თქვენი მოთხოვნის მიხედვით"
 
 #: post_filters.py:343
 msgid "I have found {posts_len} post! Wait, I am sending..."
 msgid_plural "I have found {posts_len} posts! Wait, I am sending..."
-msgstr[0] ""
+msgstr[0] "{posts_len} ობიექტის ნახვა"
+msgstr[1] "{posts_len} ობიექტის ნახვა"
+msgstr[2] "{posts_len} ობიექტის ნახვა"
 
 #: post_filters.py:345
 msgid "I have not found any posts. Try later or use different filters."
-msgstr ""
+msgstr "თქვენი მოთხოვნის მიხედვით ვერაფერი ვიპოვე, სცადეთ შეცვალოთ ფილტრის პარამეტრები, შესაძლოა უფრო მეტი მოიძებნოს. თუ რამე ახალი დაემატა, შეგატყობინებთ"
 
 #: post_filters.py:350 post_filters.py:366
 msgid "Show more posts"
-msgstr ""
+msgstr "მეტი პოსტის ჩვენება"
 
 #: post_filters.py:350 post_filters.py:366
 msgid "Показать еще"
-msgstr ""
+msgstr "მეტი"
 
 #: run.py:21
 msgid "nightSpam"
-msgstr ""
+msgstr "უკვე გვიანია,არ მინდა შეგაწუხოთ - ამიტომ ახალი ობიექტების შესახებ გამოგიგზავნით უხმო შეტყობინებას))"
 
 #: run.py:22
 msgid "daySpam"
-msgstr ""
+msgstr "არ არის შესაფერისი ვარიანტები? სცადეთ შეცვალოთ თქვენი ძიების კრიტერიუმები."
 
 #: run.py:35
 msgid "Выберите язык"
-msgstr ""
+msgstr "აირჩიეთ ენა"
 
 #: run.py:41 run.py:47
 msgid "Язык выбран"
-msgstr ""
+msgstr "ენა არჩეულია"
 
 #: run.py:64
 msgid "buttonReply_addObject"
-msgstr ""
+msgstr "ამისათვის მიჰყევით ბმულს https://avezor.ge/ თუ არ გაქვთ ანგარიში, მიუთითეთ თქვენი სახელი, ელ. ფოსტა და ტელეფონის ნომერი. რეგისტრაციას ერთ წუთზე ნაკლები დასჭირდება    თუ თქვენ უკვე გაქვთ ანგარიში ჩვენს საიტზე, უბრალოდ შედით სისტემაში და დაამატეთ ობიექტები"
 
 #: run.py:69
 msgid "buttonReply_jobs"
-msgstr ""
+msgstr "ვაკანსია"
 
 #~ msgid "Current language: {lang}."
 #~ msgstr ""
