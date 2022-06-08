@@ -1,4 +1,4 @@
-# Russian translations for AvezorBot.
+# English translations for AvezorBot.
 # Copyright (C) 2022 ORGANIZATION
 # This file is distributed under the same license as the AvezorBot project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
@@ -8,12 +8,11 @@ msgstr ""
 "Project-Id-Version: AvezorBot 2.2\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2022-06-07 14:12+0300\n"
-"PO-Revision-Date: 2022-05-23 18:58+0300\n"
+"PO-Revision-Date: 2022-06-07 13:54+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: ru\n"
-"Language-Team: ru <LL@li.org>\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,51 +20,51 @@ msgstr ""
 
 #: post.py:45
 msgid "Написать"
-msgstr "Написать"
+msgstr ""
 
 #: post.py:46
 msgid "Подробнее"
-msgstr "Подробнее"
+msgstr ""
 
 #: post.py:51
 msgid "post_Address"
-msgstr "Адрес"
+msgstr ""
 
 #: post.py:52
 msgid "post_District"
-msgstr "Район"
+msgstr ""
 
 #: post.py:53
 msgid "post_City"
-msgstr "Город"
+msgstr ""
 
 #: post.py:54
 msgid "post_Region"
-msgstr "Регион"
+msgstr ""
 
 #: post.py:55
 msgid "post_Area"
-msgstr "Площадь"
+msgstr ""
 
 #: post.py:56
 msgid "post_Rooms"
-msgstr "Количество комнат"
+msgstr ""
 
 #: post.py:57
 msgid "post_Floor"
-msgstr "Этаж"
+msgstr ""
 
 #: post.py:58
 msgid "post_Price"
-msgstr "Цена"
+msgstr ""
 
 #: post.py:59
 msgid "post_ID"
-msgstr "ID"
+msgstr ""
 
 #: post_filters.py:21
 msgid "back"
-msgstr "Вернуться"
+msgstr ""
 
 #: post_filters.py:39
 msgid "unselectAll"
@@ -77,35 +76,35 @@ msgstr ""
 
 #: post_filters.py:40
 msgid "next"
-msgstr "Далее"
+msgstr ""
 
 #: post_filters.py:59
 msgid "Выберите область:️"
-msgstr "Выберите область:"
+msgstr ""
 
 #: post_filters.py:70
 msgid "Выберите город:"
-msgstr "Выберите город:"
+msgstr ""
 
 #: post_filters.py:76
 msgid "Что Вас интересует?"
-msgstr "Что Вас интересует?"
+msgstr ""
 
 #: post_filters.py:82
 msgid "Выберите категорию:"
-msgstr "Выберите категорию"
+msgstr ""
 
 #: post_filters.py:93
 msgid "Выберите тип объекта:"
-msgstr "Выберите тип объекта"
+msgstr ""
 
 #: post_filters.py:101
 msgid "Сколько должно быть комнат в квартире?"
-msgstr "Сколько должно быть комнат в квартире?"
+msgstr ""
 
 #: post_filters.py:116
 msgid "Выберите район:"
-msgstr "Выберите район:"
+msgstr ""
 
 #: post_filters.py:304 run.py:74
 msgid "Something's wrong, I can feel it."
@@ -120,7 +119,6 @@ msgid "I have found {posts_len} post! Wait, I am sending..."
 msgid_plural "I have found {posts_len} posts! Wait, I am sending..."
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #: post_filters.py:345
 msgid "I have not found any posts. Try later or use different filters."
@@ -137,12 +135,10 @@ msgstr ""
 #: run.py:21
 msgid "nightSpam"
 msgstr ""
-"Уже поздно, чтобы не беспокоить вас - я буду присылать уведомления о "
-"новых объектах без звука))"
 
 #: run.py:22
 msgid "daySpam"
-msgstr "Нет подходящих вариантов? Попробуйте изменить критерии поиска."
+msgstr ""
 
 #: run.py:35
 msgid "Выберите язык"
@@ -155,15 +151,17 @@ msgstr ""
 #: run.py:64
 msgid "buttonReply_addObject"
 msgstr ""
-"💬 Добавить свой объект возможно через сайт,\n"
-"для этого Вам необходимо перейти по ссылке 👉 https://avezor.com/\n"
-" - Если нет аккаунта, укажите свое имя, email, и номер телефона. "
-"Регистрация займет меньше минуты 😉\n"
-" - Если у Вас уже есть аккаунт на нашем сайте, просто войдите и добавляй "
-"объекты."
 
 #: run.py:69
 msgid "buttonReply_jobs"
 msgstr ""
-"💬 Все доступные вакансии 👉 https://avezor.com/vakansii/\n"
-"Если появится что-то новое, я Вас уведомлю 😉"
+
+#~ msgid "Current language: {lang}."
+#~ msgstr ""
+
+#~ msgid "Changed language to: {lang}."
+#~ msgstr ""
+
+#~ msgid "Language {lang} not found."
+#~ msgstr ""
+
