@@ -7,10 +7,20 @@ class ButtonText:
     lang_georgian = 'ქართული ენა🇬🇪'
     lang_russian = 'Русский язык🇷🇺'
     lang_english = 'English🇬🇧'
-    change_cohort = "Изменить параметры поиска"
-    change_country = "Изменить страну🇬🇪🇺🇦"
-    add_object = "Добавить объект"
-    jobs = "Вакансии"
+    change_cohort = {'en': "Change search options", 'ru': "Изменить параметры поиска", 'ka': "ძიების პარამეტრების შეცვლა:"}
+    change_country = {'en': "Change country🇬🇪🇺🇦", 'ru': "Изменить страну🇬🇪🇺🇦", 'ka': "შეცვალე ქვეყანა🇬🇪🇺🇦"}
+    add_object = {'en': "Add object", 'ru': "Добавить объект", 'ka': "ობიექტის დამატება"}
+    jobs = {'en': "Vacancies", 'ru': "Вакансии", 'ka': "ვაკანსია:"}
+
+
+def _start(locale: str) -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup([[
+        KeyboardButton(ButtonText.change_cohort[locale]),
+        KeyboardButton(ButtonText.change_country[locale]),
+    ], [
+        KeyboardButton(ButtonText.add_object[locale]),
+        KeyboardButton(ButtonText.jobs[locale]),
+    ]], resize_keyboard=True, row_width=2)
 
 
 class Keyboards:
@@ -19,14 +29,9 @@ class Keyboards:
             KeyboardButton(ButtonText.country_ukraine),
         ]], resize_keyboard=True, row_width=2)
     ge_lang_selection = ReplyKeyboardMarkup([[
-            KeyboardButton(ButtonText.lang_georgian),
             KeyboardButton(ButtonText.lang_russian),
             KeyboardButton(ButtonText.lang_english),
-        ]], resize_keyboard=True, row_width=2)
-    start = ReplyKeyboardMarkup([[
-            KeyboardButton(ButtonText.change_cohort),
-            KeyboardButton(ButtonText.change_country),
         ], [
-            KeyboardButton(ButtonText.add_object),
-            KeyboardButton(ButtonText.jobs),
-        ]], resize_keyboard=True, row_width=2)
+            KeyboardButton(ButtonText.lang_georgian)
+    ]], resize_keyboard=True, row_width=2)
+    start = {k: _start(k) for k in ['en', 'ru', 'ka']}

@@ -2,6 +2,7 @@ import asyncio
 import itertools
 from typing import Sequence, Union
 
+import aiogram
 from aiogram.dispatcher.handler import CancelHandler
 from aiogram.types import Message, User, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
@@ -117,7 +118,7 @@ async def p__wards(region_id: int = None):
         cat_types, wards, 2, 'f/ward', allow_nothing=False, select_all=True, back=True))
 
 
-@dp.message_handler(text=ButtonText.change_cohort)
+@dp.message_handler(aiogram.filters.Text(ButtonText.change_cohort.values()))
 async def h__any__change_cohort(msg: Message):
     await mem.update_bucket(user=msg.from_user.id, query_formed=False)
 
