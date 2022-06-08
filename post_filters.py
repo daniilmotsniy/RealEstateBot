@@ -337,7 +337,7 @@ async def _show_posts(msg: Message, posts: Sequence[Post]):
 async def _show_results(query: CallbackQuery):
     msg = query.message
     await msg.answer(_("Вот, что я нашел по Вашему запросу."))
-    posts = await PostsFiltration(query.from_user.id).find_estate()
+    posts = await PostsFiltration(query.from_user.id).find_estate(skip_shown=False)
     posts_len = len(posts)
     if posts_len:
         await msg.answer(__("I have found {posts_len} post! Wait, I am sending...", "I have found {posts_len} posts! Wait, I am sending...").format(posts_len=posts_len))
@@ -356,7 +356,7 @@ async def q__any__f_check_amount(query: CallbackQuery):
 
     shown = int(query.data.removeprefix('f/pagination/'))
 
-    posts = await PostsFiltration(query.from_user.id).find_estate()
+    posts = await PostsFiltration(query.from_user.id).find_estate(skip_shown=False)
 
     msg = query.message
 

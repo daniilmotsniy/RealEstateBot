@@ -101,7 +101,7 @@ class PostsFiltration:
     def __init__(self, user_id: int):
         self._user_id: int = user_id
 
-    async def find_estate(self) -> List[Post]:
+    async def find_estate(self, skip_shown: bool = True) -> List[Post]:
         """
         :return: list of compiled posts for bot
         """
@@ -146,7 +146,7 @@ class PostsFiltration:
             district_id = return_first_item_if_exists(property_data, 'district', 'id')
             if district_id and not self.is_in_valid_districts(district_id, wards):
                 continue
-            if property_id in shown_ids:
+            if skip_shown and property_id in shown_ids:
                 continue
             results.append(Post(property_data))
             shown_ids.append(property_id)

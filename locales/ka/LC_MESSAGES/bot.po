@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AvezorBot 2.2\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-05-24 17:42+0300\n"
+"POT-Creation-Date: 2022-06-07 14:12+0300\n"
 "PO-Revision-Date: 2022-05-25 14:26+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ka\n"
@@ -18,67 +18,149 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.10.1\n"
 
-#: post.py:36
+#: post.py:45
+msgid "Написать"
+msgstr ""
+
+#: post.py:46
+msgid "Подробнее"
+msgstr ""
+
+#: post.py:51
 msgid "post_Address"
 msgstr ""
 
-#: post.py:37
+#: post.py:52
 msgid "post_District"
 msgstr ""
 
-#: post.py:38
+#: post.py:53
 msgid "post_City"
 msgstr ""
 
-#: post.py:39
+#: post.py:54
 msgid "post_Region"
 msgstr ""
 
-#: post.py:40
+#: post.py:55
 msgid "post_Area"
 msgstr ""
 
-#: post.py:41
+#: post.py:56
 msgid "post_Rooms"
 msgstr ""
 
-#: post.py:42
+#: post.py:57
 msgid "post_Floor"
 msgstr ""
 
-#: post.py:43
+#: post.py:58
 msgid "post_Price"
 msgstr ""
 
-#: post.py:44
+#: post.py:59
 msgid "post_ID"
 msgstr ""
 
-#: run.py:26
+#: post_filters.py:21
+msgid "back"
+msgstr ""
+
+#: post_filters.py:39
+msgid "unselectAll"
+msgstr ""
+
+#: post_filters.py:39
+msgid "selectAll"
+msgstr ""
+
+#: post_filters.py:40
+msgid "next"
+msgstr ""
+
+#: post_filters.py:59
+msgid "Выберите область:️"
+msgstr ""
+
+#: post_filters.py:70
+msgid "Выберите город:"
+msgstr ""
+
+#: post_filters.py:76
+msgid "Что Вас интересует?"
+msgstr ""
+
+#: post_filters.py:82
+msgid "Выберите категорию:"
+msgstr ""
+
+#: post_filters.py:93
+msgid "Выберите тип объекта:"
+msgstr ""
+
+#: post_filters.py:101
+msgid "Сколько должно быть комнат в квартире?"
+msgstr ""
+
+#: post_filters.py:116
+msgid "Выберите район:"
+msgstr ""
+
+#: post_filters.py:304 run.py:74
+msgid "Something's wrong, I can feel it."
+msgstr ""
+
+#: post_filters.py:339
+msgid "Вот, что я нашел по Вашему запросу."
+msgstr ""
+
+#: post_filters.py:343
+msgid "I have found {posts_len} post! Wait, I am sending..."
+msgid_plural "I have found {posts_len} posts! Wait, I am sending..."
+msgstr[0] ""
+
+#: post_filters.py:345
+msgid "I have not found any posts. Try later or use different filters."
+msgstr ""
+
+#: post_filters.py:350 post_filters.py:366
+msgid "Show more posts"
+msgstr ""
+
+#: post_filters.py:350 post_filters.py:366
+msgid "Показать еще"
+msgstr ""
+
+#: run.py:21
 msgid "nightSpam"
 msgstr ""
 
-#: run.py:27
+#: run.py:22
 msgid "daySpam"
 msgstr ""
 
-#: run.py:38
+#: run.py:35
+msgid "Выберите язык"
+msgstr ""
+
+#: run.py:41 run.py:47
+msgid "Язык выбран"
+msgstr ""
+
+#: run.py:64
 msgid "buttonReply_addObject"
 msgstr ""
 
-#: run.py:43
+#: run.py:69
 msgid "buttonReply_jobs"
 msgstr ""
 
-#: run.py:48
-msgid "Current language: {lang}."
-msgstr ""
+#~ msgid "Current language: {lang}."
+#~ msgstr ""
 
-#: run.py:53
-msgid "Changed language to: {lang}."
-msgstr ""
+#~ msgid "Changed language to: {lang}."
+#~ msgstr ""
 
-#: run.py:56
-msgid "Language {lang} not found."
-msgstr ""
+#~ msgid "Language {lang} not found."
+#~ msgstr ""
 
