@@ -50,8 +50,7 @@ async def _edit(query: CallbackQuery, text: str, reply_markup: InlineKeyboardMar
 
 
 def _get_currency(bucket: dict) -> str:
-    # TODO translate
-    return 'гривне' if bucket['action'] == 180 else 'долларах'
+    return _("местной валюте") if bucket['action'] == 180 else _("долларах")
 
 
 async def p__area():
@@ -212,7 +211,6 @@ async def q__any__f_prop_type(query: CallbackQuery):
 async def q__any__f_room_counts(query: CallbackQuery):
     slug = query.data.removeprefix('f/roomCounts/')
 
-    # TODO translate
     if slug == 'next':
         await _edit(query, **await p__wards())
         return
@@ -236,7 +234,6 @@ async def q__any__f_room_counts(query: CallbackQuery):
 async def q__any__f_ward(query: CallbackQuery):
     slug = query.data.removeprefix('f/ward/')
 
-    # TODO translate
     if slug == 'next':
         await _query_amount(query)
         return
@@ -265,8 +262,7 @@ async def _query_amount(query: CallbackQuery):
 
     await mem.update_bucket(user=query.from_user.id, amount_min=None, amount_max=None)
 
-    # TODO
-    await query.message.edit_text(f"Укажите ниже минимальную сумму в {currency}.")
+    await query.message.edit_text(__("Укажите ниже минимальную сумму в {currency}.").format(currency=currency))
 
 
 async def _try_to_set_amount(msg: Message) -> bool:
@@ -284,8 +280,7 @@ async def _try_to_set_amount(msg: Message) -> bool:
                     await mem.update_bucket(user=msg.from_user.id, amount_max=amount)
                     return True
                 else:
-                    # TODO
-                    await msg.answer("Укажите ниже сумму в долларах не более 100000000.")
+                    await msg.answer(_("Укажите ниже сумму в долларах не более 100000000."))
 
     raise ValueError('Cannot set amount')
 
@@ -297,14 +292,17 @@ async def h__any__amount(msg: Message):
             bucket = await mem.get_bucket(user=msg.from_user.id)
 
             currency = _get_currency(bucket)
-            # TODO
-            await msg.answer(f"Указна сумма от {bucket['amount_min']} до {bucket['amount_max']} в {currency}", reply_markup=create_dynamic_inline_keyboard((('edit', "Изменить сумму"), ('next', "Далее")), 2, 'f/checkAmount', back=True))
+            await msg.answer(__("Указна сумма от {amount_min} до {amount_max} в {currency}.").format(
+                amount_min=bucket['amount_min'], amount_max=bucket['amount_max'],
+                currency=currency
+            ), reply_markup=create_dynamic_inline_keyboard(
+                (('edit', "Изменить сумму"), ('next', "Далее")), 2, 'f/checkAmount', back=True)
+            )
         else:
             bucket = await mem.get_bucket(user=msg.from_user.id)
 
             currency = _get_currency(bucket)
-            # TODO
-            await msg.answer(f"Укажите ниже максимальную сумму в {currency}.")
+            await msg.answer(__("Укажите ниже максимальную сумму в {currency}").format(currency=currency))
     except ValueError:
         await msg.answer(_("Something's wrong, I can feel it."))
 
@@ -321,8 +319,7 @@ async def q__any__f_check_amount(query: CallbackQuery):
         currency = _get_currency(bucket)
 
         await mem.update_bucket(user=query.from_user.id, amount_min=None, amount_max=None)
-        # TODO
-        await query.message.edit_text(f"Укажите ниже минимальную сумму в {currency}.")
+        await query.message.edit_text(__("Укажите ниже минимальную сумму в {currency}").format(currency=currency))
     elif slug == 'next':
         await mem.update_bucket(user=query.from_user.id, query_formed=True)
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AvezorBot 2.2\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-07 14:12+0300\n"
+"POT-Creation-Date: 2022-06-08 19:05+0300\n"
 "PO-Revision-Date: 2022-05-25 14:26+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ka\n"
@@ -78,6 +78,14 @@ msgstr "აირჩიე ყველა"
 msgid "next"
 msgstr "შემდეგი"
 
+#: post_filters.py:53
+msgid "местной валюте"
+msgstr "ადგილობრივი ვალუტა"
+
+#: post_filters.py:53
+msgid "долларах"
+msgstr "დოლარი"
+
 #: post_filters.py:59
 msgid "Выберите область:️"
 msgstr "აირჩიეთ სფერო:"
@@ -106,54 +114,55 @@ msgstr "რამდენი ოთახი უნდა იყოს ბი�
 msgid "Выберите район:"
 msgstr "აირჩიეთ უბანი:"
 
-#: post_filters.py:304 run.py:74
+#: post_filters.py:283
+msgid "Укажите ниже сумму в долларах не более 100000000."
+msgstr "შეიყვანეთ დოლარის თანხა 100000000-ზე ქვემოთ."
+
+#: post_filters.py:307 run.py:80
 msgid "Something's wrong, I can feel it."
 msgstr "რაღაც არასწორია, ამას ვგრძნობ."
 
-#: post_filters.py:339
+#: post_filters.py:341
 msgid "Вот, что я нашел по Вашему запросу."
 msgstr "აი, რა ვიპოვე თქვენი მოთხოვნის მიხედვით"
 
-#: post_filters.py:343
+#: post_filters.py:345
 msgid "I have found {posts_len} post! Wait, I am sending..."
 msgid_plural "I have found {posts_len} posts! Wait, I am sending..."
 msgstr[0] "{posts_len} ობიექტის ნახვა"
-msgstr[1] "{posts_len} ობიექტის ნახვა"
-msgstr[2] "{posts_len} ობიექტის ნახვა"
 
-#: post_filters.py:345
+#: post_filters.py:347
 msgid "I have not found any posts. Try later or use different filters."
-msgstr "თქვენი მოთხოვნის მიხედვით ვერაფერი ვიპოვე, სცადეთ შეცვალოთ ფილტრის პარამეტრები, შესაძლოა უფრო მეტი მოიძებნოს. თუ რამე ახალი დაემატა, შეგატყობინებთ"
+msgstr ""
+"თქვენი მოთხოვნის მიხედვით ვერაფერი ვიპოვე, სცადეთ შეცვალოთ ფილტრის "
+"პარამეტრები, შესაძლოა უფრო მეტი მოიძებნოს. თუ რამე ახალი დაემატა, "
+"შეგატყობინებთ"
 
-#: post_filters.py:350 post_filters.py:366
+#: post_filters.py:352 post_filters.py:368
 msgid "Show more posts"
 msgstr "მეტი პოსტის ჩვენება"
 
-#: post_filters.py:350 post_filters.py:366
+#: post_filters.py:352 post_filters.py:368
 msgid "Показать еще"
 msgstr "მეტი"
-
-#: run.py:21
-msgid "nightSpam"
-msgstr "უკვე გვიანია,არ მინდა შეგაწუხოთ - ამიტომ ახალი ობიექტების შესახებ გამოგიგზავნით უხმო შეტყობინებას))"
-
-#: run.py:22
-msgid "daySpam"
-msgstr "არ არის შესაფერისი ვარიანტები? სცადეთ შეცვალოთ თქვენი ძიების კრიტერიუმები."
 
 #: run.py:35
 msgid "Выберите язык"
 msgstr "აირჩიეთ ენა"
 
-#: run.py:41 run.py:47
+#: run.py:41 run.py:47 run.py:53
 msgid "Язык выбран"
 msgstr "ენა არჩეულია"
 
-#: run.py:64
+#: run.py:70
 msgid "buttonReply_addObject"
-msgstr "ამისათვის მიჰყევით ბმულს https://avezor.ge/ თუ არ გაქვთ ანგარიში, მიუთითეთ თქვენი სახელი, ელ. ფოსტა და ტელეფონის ნომერი. რეგისტრაციას ერთ წუთზე ნაკლები დასჭირდება    თუ თქვენ უკვე გაქვთ ანგარიში ჩვენს საიტზე, უბრალოდ შედით სისტემაში და დაამატეთ ობიექტები"
+msgstr ""
+"ამისათვის მიჰყევით ბმულს https://avezor.ge/ თუ არ გაქვთ ანგარიში, "
+"მიუთითეთ თქვენი სახელი, ელ. ფოსტა და ტელეფონის ნომერი. რეგისტრაციას ერთ "
+"წუთზე ნაკლები დასჭირდება    თუ თქვენ უკვე გაქვთ ანგარიში ჩვენს საიტზე, "
+"უბრალოდ შედით სისტემაში და დაამატეთ ობიექტები"
 
-#: run.py:69
+#: run.py:75
 msgid "buttonReply_jobs"
 msgstr "ვაკანსია"
 
@@ -165,4 +174,15 @@ msgstr "ვაკანსია"
 
 #~ msgid "Language {lang} not found."
 #~ msgstr ""
+
+#~ msgid "nightSpam"
+#~ msgstr ""
+#~ "უკვე გვიანია,არ მინდა შეგაწუხოთ - ამიტომ"
+#~ " ახალი ობიექტების შესახებ გამოგიგზავნით "
+#~ "უხმო შეტყობინებას))"
+
+#~ msgid "daySpam"
+#~ msgstr ""
+#~ "არ არის შესაფერისი ვარიანტები? სცადეთ "
+#~ "შეცვალოთ თქვენი ძიების კრიტერიუმები."
 
