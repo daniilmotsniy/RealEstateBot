@@ -154,7 +154,7 @@ msgstr "For this you need to follow the link https://avezor.ge, if you do not ha
 
 #: run.py:69
 msgid "buttonReply_jobs"
-msgstr "All available vacancy is https://avezor.com/vakansii/"
+msgstr "All available vacancy is https://avezor.ge/vakansii/"
 
 #~ msgid "Current language: {lang}."
 #~ msgstr ""

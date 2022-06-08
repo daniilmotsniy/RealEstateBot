@@ -47,6 +47,12 @@ async def h__any__lang_russian(msg: Message):
     await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start)
 
 
+@dp.message_handler(text=ButtonText.lang_english)
+async def h__any__lang_english(msg: Message):
+    await i18n.set_locale(msg.from_user, 'en')
+    await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start)
+
+
 @dp.message_handler(text=ButtonText.country_ukraine)
 async def h__any__country_ukraine(msg: Message):
     await mem.update_bucket(user=msg.from_user.id, country='ua')
