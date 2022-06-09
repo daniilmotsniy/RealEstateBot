@@ -1,7 +1,7 @@
 import logging
 from os import getenv
 
-from aiogram import executor
+from aiogram import executor, filters
 from aiogram.types import Message
 
 from avbot import dp, mem
@@ -38,35 +38,41 @@ async def h__any__country_georgia(msg: Message):
 @dp.message_handler(text=ButtonText.lang_georgian)
 async def h__any__lang_georgian(msg: Message):
     await i18n.set_locale(msg.from_user, 'ka')
-    await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start)
+    await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start['ka'])
 
 
 @dp.message_handler(text=ButtonText.lang_russian)
 async def h__any__lang_russian(msg: Message):
     await i18n.set_locale(msg.from_user, 'ru')
-    await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start)
+    await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start['ru'])
+
+
+@dp.message_handler(text=ButtonText.lang_english)
+async def h__any__lang_english(msg: Message):
+    await i18n.set_locale(msg.from_user, 'en')
+    await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start['en'])
 
 
 @dp.message_handler(text=ButtonText.country_ukraine)
 async def h__any__country_ukraine(msg: Message):
     await mem.update_bucket(user=msg.from_user.id, country='ua')
     await i18n.set_locale(msg.from_user, 'ru')
-    await msg.answer('Вы выбрали Украину.', reply_markup=Keyboards.start)
+    await msg.answer('Вы выбрали Украину.', reply_markup=Keyboards.start['ru'])
 
 
-@dp.message_handler(text=ButtonText.change_country)
+@dp.message_handler(filters.Text(ButtonText.change_country.values()))
 async def h__any__change_country(msg: Message):
     await h__start(msg)
 
 
-@dp.message_handler(text=ButtonText.add_object)
+@dp.message_handler(filters.Text(ButtonText.add_object.values()))
 async def h__add_object(msg: Message):
-    await msg.answer(_('buttonReply_addObject'), reply_markup=Keyboards.start)
+    await msg.answer(_('buttonReply_addObject'))
 
 
-@dp.message_handler(text=ButtonText.jobs)
+@dp.message_handler(filters.Text(ButtonText.jobs.values()))
 async def h__jobs(msg: Message):
-    await msg.answer(_('buttonReply_jobs'), reply_markup=Keyboards.start)
+    await msg.answer(_('buttonReply_jobs'))
 
 
 @dp.message_handler()

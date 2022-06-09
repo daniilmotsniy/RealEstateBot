@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AvezorBot 2.2\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-07 14:12+0300\n"
+"POT-Creation-Date: 2022-06-08 19:05+0300\n"
 "PO-Revision-Date: 2022-05-23 18:58+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -69,15 +69,23 @@ msgstr "Вернуться"
 
 #: post_filters.py:39
 msgid "unselectAll"
-msgstr ""
+msgstr "Убрать все"
 
 #: post_filters.py:39
 msgid "selectAll"
-msgstr ""
+msgstr "Выбрать все"
 
 #: post_filters.py:40
 msgid "next"
 msgstr "Далее"
+
+#: post_filters.py:53
+msgid "местной валюте"
+msgstr "местной валюте"
+
+#: post_filters.py:53
+msgid "долларах"
+msgstr "долларах"
 
 #: post_filters.py:59
 msgid "Выберите область:️"
@@ -107,52 +115,48 @@ msgstr "Сколько должно быть комнат в квартире?"
 msgid "Выберите район:"
 msgstr "Выберите район:"
 
-#: post_filters.py:304 run.py:74
+#: post_filters.py:283
+msgid "Укажите ниже сумму в долларах не более 100000000."
+msgstr "Укажите ниже сумму в долларах не более 100000000."
+
+#: post_filters.py:307 run.py:80
 msgid "Something's wrong, I can feel it."
-msgstr ""
+msgstr "Что-то пошло не так..."
 
-#: post_filters.py:339
+#: post_filters.py:341
 msgid "Вот, что я нашел по Вашему запросу."
-msgstr ""
-
-#: post_filters.py:343
-msgid "I have found {posts_len} post! Wait, I am sending..."
-msgid_plural "I have found {posts_len} posts! Wait, I am sending..."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr "Вот, что я нашел по Вашему запросу."
 
 #: post_filters.py:345
+msgid "I have found {posts_len} post! Wait, I am sending..."
+msgid_plural "I have found {posts_len} posts! Wait, I am sending..."
+msgstr[0] "Посмотреть {posts_len} объекта(ов)"
+msgstr[1] "Посмотреть {posts_len} объекта(ов)"
+msgstr[2] "Посмотреть {posts_len} объекта(ов)"
+
+#: post_filters.py:347
 msgid "I have not found any posts. Try later or use different filters."
 msgstr ""
+"Я не нашел ни одного поста. Попробуйте позже или используйте другие "
+"фильтры."
 
-#: post_filters.py:350 post_filters.py:366
+#: post_filters.py:352 post_filters.py:368
 msgid "Show more posts"
-msgstr ""
+msgstr "Больше постов"
 
-#: post_filters.py:350 post_filters.py:366
+#: post_filters.py:352 post_filters.py:368
 msgid "Показать еще"
-msgstr ""
-
-#: run.py:21
-msgid "nightSpam"
-msgstr ""
-"Уже поздно, чтобы не беспокоить вас - я буду присылать уведомления о "
-"новых объектах без звука))"
-
-#: run.py:22
-msgid "daySpam"
-msgstr "Нет подходящих вариантов? Попробуйте изменить критерии поиска."
+msgstr "Показать еще"
 
 #: run.py:35
 msgid "Выберите язык"
-msgstr ""
+msgstr "Выберите язык"
 
-#: run.py:41 run.py:47
+#: run.py:41 run.py:47 run.py:53
 msgid "Язык выбран"
-msgstr ""
+msgstr "Язык выбран"
 
-#: run.py:64
+#: run.py:70
 msgid "buttonReply_addObject"
 msgstr ""
 "💬 Добавить свой объект возможно через сайт,\n"
@@ -162,8 +166,18 @@ msgstr ""
 " - Если у Вас уже есть аккаунт на нашем сайте, просто войдите и добавляй "
 "объекты."
 
-#: run.py:69
+#: run.py:75
 msgid "buttonReply_jobs"
 msgstr ""
 "💬 Все доступные вакансии 👉 https://avezor.com/vakansii/\n"
 "Если появится что-то новое, я Вас уведомлю 😉"
+
+#~ msgid "nightSpam"
+#~ msgstr ""
+#~ "Уже поздно, чтобы не беспокоить вас "
+#~ "- я буду присылать уведомления о "
+#~ "новых объектах без звука))"
+
+#~ msgid "daySpam"
+#~ msgstr "Нет подходящих вариантов? Попробуйте изменить критерии поиска."
+
