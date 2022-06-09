@@ -164,7 +164,7 @@ msgstr ""
 
 #: run.py:75
 msgid "buttonReply_jobs"
-msgstr "ვაკანსია"
+msgstr "ყველა ხელმისაწვდომი ვაკანსია   https://avezor.ge/vakansii/"
 
 #~ msgid "Current language: {lang}."
 #~ msgstr ""
