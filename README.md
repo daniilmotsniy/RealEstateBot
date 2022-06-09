@@ -6,7 +6,7 @@
 - `pip install "pymongo[srv]"`
 - set `BOT_TOKEN` env var
 - set `MONGODB_URL` env var
-- `pybabel extract --input-dirs=. --ignore-dirs=venv -o locales/bot.pot --version=2.2 --project=AvezorBot -k __:1,2 && pybabel update -d locales -D bot -i locales/bot.pot`
+- `pybabel extract --input-dirs=. --ignore-dirs=venv -o locales/bot.pot --version=2.2 --project=AvezorBot -k __:1,2 -k ___ && pybabel update -d locales -D bot -i locales/bot.pot`
 - `pybabel compile -d locales -D bot`
 - run `python run.py`
 

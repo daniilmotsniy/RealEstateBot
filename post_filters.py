@@ -51,13 +51,13 @@ async def _edit(query: CallbackQuery, text: str, reply_markup: InlineKeyboardMar
 
 
 def _get_currency(bucket: dict) -> str:
-    return _("местной валюте") if bucket['action'] == 180 else _("долларах")
+    return _("местной валюте") if bucket['action'] in {180, 538, 760} else _("долларах")
 
 
 async def p__area():
     areas = await newapi.get_areas()
 
-    return {'text': _('Выберите область:️'), 'reply_markup': create_dynamic_inline_keyboard(areas, 2, 'f/area')}
+    return {'text': _('Выберите область:'), 'reply_markup': create_dynamic_inline_keyboard(areas, 2, 'f/area')}
 
 
 async def p__region(slug: int = None):
@@ -263,7 +263,7 @@ async def _query_amount(query: CallbackQuery):
 
     await mem.update_bucket(user=query.from_user.id, amount_min=None, amount_max=None)
 
-    await query.message.edit_text(__("Укажите ниже минимальную сумму в {currency}.").format(currency=currency))
+    await query.message.edit_text(_("Укажите ниже минимальную сумму в {currency}.").format(currency=currency))
 
 
 async def _try_to_set_amount(msg: Message) -> bool:
@@ -274,14 +274,21 @@ async def _try_to_set_amount(msg: Message) -> bool:
     if bucket.get('query_formed') is False:
         if 'amount_min' in bucket:
             if bucket['amount_min'] is None:
-                await mem.update_bucket(user=msg.from_user.id, amount_min=amount)
-                return False
+                if amount > 100000000:
+                    currency = _get_currency(bucket)
+                    await msg.answer(_("Укажите ниже сумму в {currency} не более 100000000.").format(currency=currency))
+                else:
+                    await mem.update_bucket(user=msg.from_user.id, amount_min=amount)
+                    return False
             if bucket['amount_max'] is None:
-                if amount < 100000000:
+                if amount > 100000000:
+                    currency = _get_currency(bucket)
+                    await msg.answer(_("Укажите ниже сумму в {currency} не более 100000000.").format(currency=currency))
+                elif amount < bucket['amount_min']:
+                    await msg.answer(_("она не должна быть меньше минимальной суммы"))
+                else:
                     await mem.update_bucket(user=msg.from_user.id, amount_max=amount)
                     return True
-                else:
-                    await msg.answer(_("Укажите ниже сумму в долларах не более 100000000."))
 
     raise ValueError('Cannot set amount')
 
@@ -293,17 +300,17 @@ async def h__any__amount(msg: Message):
             bucket = await mem.get_bucket(user=msg.from_user.id)
 
             currency = _get_currency(bucket)
-            await msg.answer(__("Указна сумма от {amount_min} до {amount_max} в {currency}.").format(
+            await msg.answer(_("Указана сумма от {amount_min} до {amount_max} в {currency}.").format(
                 amount_min=bucket['amount_min'], amount_max=bucket['amount_max'],
                 currency=currency
             ), reply_markup=create_dynamic_inline_keyboard(
-                (('edit', "Изменить сумму"), ('next', "Далее")), 2, 'f/checkAmount', back=True)
+                (('edit', _("Изменить сумму")), ('next', _("Далее"))), 2, 'f/checkAmount', back=True)
             )
         else:
             bucket = await mem.get_bucket(user=msg.from_user.id)
 
             currency = _get_currency(bucket)
-            await msg.answer(__("Укажите ниже максимальную сумму в {currency}").format(currency=currency))
+            await msg.answer(_("Укажите ниже максимальную сумму в {currency}").format(currency=currency))
     except ValueError:
         await msg.answer(_("Something's wrong, I can feel it."))
 
@@ -320,7 +327,7 @@ async def q__any__f_check_amount(query: CallbackQuery):
         currency = _get_currency(bucket)
 
         await mem.update_bucket(user=query.from_user.id, amount_min=None, amount_max=None)
-        await query.message.edit_text(__("Укажите ниже минимальную сумму в {currency}").format(currency=currency))
+        await query.message.edit_text(_("Укажите ниже минимальную сумму в {currency}").format(currency=currency))
     elif slug == 'next':
         await mem.update_bucket(user=query.from_user.id, query_formed=True)
 

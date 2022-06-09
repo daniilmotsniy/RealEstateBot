@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AvezorBot 2.2\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-08 19:05+0300\n"
+"POT-Creation-Date: 2022-06-09 12:35+0300\n"
 "PO-Revision-Date: 2022-05-23 18:58+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -63,90 +63,128 @@ msgstr "Цена"
 msgid "post_ID"
 msgstr "ID"
 
-#: post_filters.py:21
+#: post_filters.py:22
 msgid "back"
 msgstr "Вернуться"
 
-#: post_filters.py:39
+#: post_filters.py:40
 msgid "unselectAll"
 msgstr "Убрать все"
 
-#: post_filters.py:39
+#: post_filters.py:40
 msgid "selectAll"
 msgstr "Выбрать все"
 
-#: post_filters.py:40
+#: post_filters.py:41
 msgid "next"
 msgstr "Далее"
 
-#: post_filters.py:53
+#: post_filters.py:54
 msgid "местной валюте"
 msgstr "местной валюте"
 
-#: post_filters.py:53
+#: post_filters.py:54
 msgid "долларах"
 msgstr "долларах"
 
-#: post_filters.py:59
-msgid "Выберите область:️"
+#: post_filters.py:60
+msgid "Выберите область:"
 msgstr "Выберите область:"
 
-#: post_filters.py:70
+#: post_filters.py:71
 msgid "Выберите город:"
 msgstr "Выберите город:"
 
-#: post_filters.py:76
+#: post_filters.py:77
 msgid "Что Вас интересует?"
 msgstr "Что Вас интересует?"
 
-#: post_filters.py:82
+#: post_filters.py:83
 msgid "Выберите категорию:"
 msgstr "Выберите категорию"
 
-#: post_filters.py:93
+#: post_filters.py:94
 msgid "Выберите тип объекта:"
 msgstr "Выберите тип объекта"
 
-#: post_filters.py:101
+#: post_filters.py:102
 msgid "Сколько должно быть комнат в квартире?"
 msgstr "Сколько должно быть комнат в квартире?"
 
-#: post_filters.py:116
+#: post_filters.py:117
 msgid "Выберите район:"
 msgstr "Выберите район:"
 
-#: post_filters.py:283
-msgid "Укажите ниже сумму в долларах не более 100000000."
-msgstr "Укажите ниже сумму в долларах не более 100000000."
+#: post_filters.py:266
+msgid "Укажите ниже минимальную сумму в {currency}."
+msgstr "Укажите ниже сумму в {currency} не более 100000000."
 
-#: post_filters.py:307 run.py:80
+#: post_filters.py:279 post_filters.py:286
+msgid "Укажите ниже сумму в {currency} не более 100000000."
+msgstr "Укажите ниже сумму в {currency} не более 100000000."
+
+#: post_filters.py:288
+msgid "она не должна быть меньше минимальной суммы"
+msgstr "она не должна быть меньше минимальной суммы"
+
+#: post_filters.py:303
+msgid "Указана сумма от {amount_min} до {amount_max} в {currency}."
+msgstr "Указана сумма от {amount_min} до {amount_max} в {currency}."
+
+#: post_filters.py:307
+msgid "Изменить сумму"
+msgstr "Изменить сумму"
+
+#: post_filters.py:307
+msgid "Далее"
+msgstr "Далее"
+
+#: post_filters.py:313
+msgid "Укажите ниже максимальную сумму в {currency}"
+msgstr "Укажите ниже максимальную сумму в {currency}"
+
+#: post_filters.py:315 run.py:80
 msgid "Something's wrong, I can feel it."
 msgstr "Что-то пошло не так..."
 
-#: post_filters.py:341
+#: post_filters.py:330
+msgid "Укажите ниже минимальную сумму в {currency}"
+msgstr "Укажите ниже сумму в {currency} не более 100000000."
+
+#: post_filters.py:349
 msgid "Вот, что я нашел по Вашему запросу."
 msgstr "Вот, что я нашел по Вашему запросу."
 
-#: post_filters.py:345
+#: post_filters.py:353
 msgid "I have found {posts_len} post! Wait, I am sending..."
 msgid_plural "I have found {posts_len} posts! Wait, I am sending..."
 msgstr[0] "Посмотреть {posts_len} объекта(ов)"
 msgstr[1] "Посмотреть {posts_len} объекта(ов)"
 msgstr[2] "Посмотреть {posts_len} объекта(ов)"
 
-#: post_filters.py:347
+#: post_filters.py:355
 msgid "I have not found any posts. Try later or use different filters."
 msgstr ""
 "Я не нашел ни одного поста. Попробуйте позже или используйте другие "
 "фильтры."
 
-#: post_filters.py:352 post_filters.py:368
+#: post_filters.py:360 post_filters.py:376
 msgid "Show more posts"
 msgstr "Больше постов"
 
-#: post_filters.py:352 post_filters.py:368
+#: post_filters.py:360 post_filters.py:376
 msgid "Показать еще"
 msgstr "Показать еще"
+
+#: run.py:21
+msgid "nightSpam"
+msgstr ""
+"Уже поздно, чтобы не беспокоить вас - я буду присылать уведомления о "
+"новых объектах без звука))"
+
+#: run.py:22
+msgid "daySpam"
+msgstr "Нет подходящих вариантов? Попробуйте изменить критерии поиска."
 
 #: run.py:35
 msgid "Выберите язык"
@@ -171,13 +209,4 @@ msgid "buttonReply_jobs"
 msgstr ""
 "💬 Все доступные вакансии 👉 https://avezor.com/vakansii/\n"
 "Если появится что-то новое, я Вас уведомлю 😉"
-
-#~ msgid "nightSpam"
-#~ msgstr ""
-#~ "Уже поздно, чтобы не беспокоить вас "
-#~ "- я буду присылать уведомления о "
-#~ "новых объектах без звука))"
-
-#~ msgid "daySpam"
-#~ msgstr "Нет подходящих вариантов? Попробуйте изменить критерии поиска."
 
