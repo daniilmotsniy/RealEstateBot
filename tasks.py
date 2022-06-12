@@ -17,7 +17,6 @@ class PeriodicTask(ABC):
     DO_NOT_DISTURB_AFTER = 22
 
     def __init__(self):
-        self.user_ids: typing.List[tuple[int, str, str]] = self.find_users()
         self.country_2_tz = {
             'ua': 'Etc/GMT-3',
             'ge': 'Etc/GMT-4',
@@ -49,7 +48,7 @@ class PeriodicTask(ABC):
         return now.hour >= self.DO_NOT_DISTURB_AFTER
 
     async def send(self):
-        for user_id, locale, country in self.user_ids:
+        for user_id, locale, country in self.find_users():
             i18n.ctx_locale.set(locale)
             await self.get_bot_coroutine(
                 user_id,
