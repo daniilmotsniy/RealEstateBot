@@ -20,7 +20,7 @@ ___ = i18n.lazy_gettext
 scheduler = Scheduler(
     PeriodicDailyText(1, '22:00', ___('nightSpam')),
     PeriodicDailyText(5, '18:00', ___('daySpam')),
-    PeriodicPostSpammer(10),
+    PeriodicPostSpammer(1),
 )
 
 
