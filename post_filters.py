@@ -158,9 +158,7 @@ async def q__any__f_area(query: CallbackQuery):
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/region/'))
 async def q__any__f_region(query: CallbackQuery):
-    s_slug = query.data.removeprefix('f/region/')
-
-    region_id = int(s_slug)
+    region_id = int(query.data.removeprefix('f/region/'))
 
     await mem.update_bucket(user=query.from_user.id, region=region_id)
 
@@ -169,9 +167,7 @@ async def q__any__f_region(query: CallbackQuery):
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/actions/'))
 async def q__any__f_actions(query: CallbackQuery):
-    s_slug = query.data.removeprefix('f/actions/')
-
-    action_id = int(s_slug)
+    action_id = int(query.data.removeprefix('f/actions/'))
 
     await mem.update_bucket(user=query.from_user.id, action=action_id)
 
@@ -180,9 +176,7 @@ async def q__any__f_actions(query: CallbackQuery):
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/postType/'))
 async def q__any__f_post_type(query: CallbackQuery):
-    s_slug = query.data.removeprefix('f/postType/')
-
-    slug = int(s_slug)
+    slug = int(query.data.removeprefix('f/postType/'))
 
     await mem.update_bucket(user=query.from_user.id, post_type=slug)
 
@@ -191,14 +185,15 @@ async def q__any__f_post_type(query: CallbackQuery):
     else:
         await mem.update_bucket(user=query.from_user.id, property_type=None)
 
-        await _edit(query, **await p__wards())
+        if slug == 1188:  # zastrojshhik
+            await _edit(query, **await p__room_counts())
+        else:
+            await _edit(query, **await p__wards())
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/propType/'))
 async def q__any__f_prop_type(query: CallbackQuery):
-    s_slug = query.data.removeprefix('f/propType/')
-
-    slug = int(s_slug)
+    slug = int(query.data.removeprefix('f/propType/'))
 
     await mem.update_bucket(user=query.from_user.id, property_type=slug)
 
