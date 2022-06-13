@@ -180,12 +180,12 @@ async def q__any__f_post_type(query: CallbackQuery):
 
     await mem.update_bucket(user=query.from_user.id, post_type=slug)
 
-    if slug == 178 or slug == 279:  # housing or commercial
+    if slug in {178, 717, 532, 279, 735, 546}:  # housing or commercial
         await _edit(query, **await p__prop_type(slug))
     else:
         await mem.update_bucket(user=query.from_user.id, property_type=None)
 
-        if slug == 1188:  # zastrojshhik
+        if slug in {1188, 1187, 1186}:  # zastrojshhik
             await _edit(query, **await p__room_counts())
         else:
             await _edit(query, **await p__wards())
