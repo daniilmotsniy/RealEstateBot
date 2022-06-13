@@ -135,11 +135,7 @@ async def q__back(query: CallbackQuery):
         await _edit(query, **await p__region())
     elif slug == 'postType':
         await _edit(query, **await p__actions())
-    elif slug == 'propType':
-        await _edit(query, **await p__post_type())
-    elif slug == 'roomCounts':
-        await _edit(query, **await p__prop_type())
-    elif slug == 'ward':
+    elif slug in {'propType', 'roomCounts', 'ward'}:
         await _edit(query, **await p__post_type())
     elif slug == 'checkAmount':
         await _edit(query, **await p__wards())
