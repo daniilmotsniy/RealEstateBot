@@ -193,7 +193,7 @@ async def q__any__f_prop_type(query: CallbackQuery):
 
     await mem.update_bucket(user=query.from_user.id, property_type=slug)
 
-    if slug == 300:  # kvartira
+    if slug in {300, 718, 534}:  # kvartira
         await _edit(query, **await p__room_counts())
     else:
         await _edit(query, **await p__wards())
