@@ -15,7 +15,8 @@ from post import PostsFiltration, Post
 _ = __ = i18n.gettext
 
 
-def create_dynamic_inline_keyboard(values: Sequence[tuple[Union[str, int], Union[str, int]]], cols: int, domain: str, back: bool = False):
+def create_dynamic_inline_keyboard(values: Sequence[tuple[Union[str, int], Union[str, int]]], cols: int, domain: str,
+                                   back: bool = False):
     length = len(values)
 
     if back:
@@ -25,12 +26,15 @@ def create_dynamic_inline_keyboard(values: Sequence[tuple[Union[str, int], Union
 
     values = [InlineKeyboardButton(str(text), callback_data=f'{domain}/{slug}') for slug, text in values]
 
-    kb = list(itertools.chain(zip(*(itertools.repeat(iter(values), cols))), (tuple(values[-(length % cols):]),) if length % cols else ()))
+    kb = list(itertools.chain(zip(*(itertools.repeat(iter(values), cols))),
+                              (tuple(values[-(length % cols):]),) if length % cols else ()))
 
     return InlineKeyboardMarkup(cols, kb)
 
 
-def create_multiple_choice_keyboard(values: Sequence[tuple[Union[str, int], Union[str, int]]], selected: Sequence[Union[str, int]], cols: int, domain: str, allow_nothing: bool = True, select_all: bool = False, back: bool = False):
+def create_multiple_choice_keyboard(values: Sequence[tuple[Union[str, int], Union[str, int]]],
+                                    selected: Sequence[Union[str, int]], cols: int, domain: str,
+                                    allow_nothing: bool = True, select_all: bool = False, back: bool = False):
     selected_count = sum(slug in selected for slug, text in values)
     all_selected = selected_count == len(values)
     values = ((slug, f"{'✅' if slug in selected else '◽️'} {text}") for slug, text in values)
@@ -42,7 +46,8 @@ def create_multiple_choice_keyboard(values: Sequence[tuple[Union[str, int], Unio
     ), cols, domain, back=back)
 
 
-def _dict(text: str, buttons: Sequence[tuple[Union[str, int], Union[str, int]]], domain: str, cols: int = 2, back: bool = False):
+def _dict(text: str, buttons: Sequence[tuple[Union[str, int], Union[str, int]]], domain: str, cols: int = 2,
+          back: bool = False):
     return dict(text=text, reply_markup=create_dynamic_inline_keyboard(buttons, cols, domain, back=back))
 
 
@@ -51,6 +56,7 @@ async def _edit(query: CallbackQuery, text: str, reply_markup: InlineKeyboardMar
 
 
 def _get_currency(bucket: dict) -> str:
+    # TODO fix hardcode
     return _("местной валюте") if bucket['action'] in {180, 538, 760} else _("долларах")
 
 
@@ -149,7 +155,7 @@ async def q__any__f_area(query: CallbackQuery):
 
     await mem.update_bucket(user=query.from_user.id, area=area_id)
 
-    await _edit(query, ** await p__region(area_id))
+    await _edit(query, **await p__region(area_id))
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/region/'))
@@ -180,7 +186,7 @@ async def q__any__f_post_type(query: CallbackQuery):
         await _edit(query, **await p__prop_type(slug))
     else:
         await mem.update_bucket(user=query.from_user.id, property_type=None)
-
+        # TODO fix hardcode
         if slug in {1188, 1187, 1186}:  # zastrojshhik
             await _edit(query, **await p__room_counts())
         else:
@@ -192,7 +198,7 @@ async def q__any__f_prop_type(query: CallbackQuery):
     slug = int(query.data.removeprefix('f/propType/'))
 
     await mem.update_bucket(user=query.from_user.id, property_type=slug)
-
+    # TODO fix hardcode
     if slug in {300, 718, 534}:  # kvartira
         await _edit(query, **await p__room_counts())
     else:
@@ -341,14 +347,20 @@ async def _show_results(query: CallbackQuery):
     posts = await PostsFiltration(query.from_user.id).find_estate(skip_shown=False)
     posts_len = len(posts)
     if posts_len:
-        await msg.answer(__("I have found {posts_len} post! Wait, I am sending...", "I have found {posts_len} posts! Wait, I am sending...").format(posts_len=posts_len))
+        await msg.answer(__("I have found {posts_len} post! Wait, I am sending...",
+                            "I have found {posts_len} posts! Wait, I am sending...").format(posts_len=posts_len))
     else:
         await msg.answer(_("I have not found any posts. Try later or use different filters."))
 
     await _show_posts(msg, posts[:20])
 
     if posts_len > 20:
-        await msg.answer(_("Show more posts"), reply_markup=InlineKeyboardMarkup(1, [[InlineKeyboardButton(_("Показать еще"), callback_data='f/pagination/20')]]))
+        await msg.answer(__("Show {posts_len} posts",
+                            "Show {posts_len} posts",
+                            ).format(posts_len=len(posts)),
+                         reply_markup=InlineKeyboardMarkup(1, [
+                             [InlineKeyboardButton(_("Показать еще"),
+                                                   callback_data='f/pagination/20')]]))
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/pagination/'))
@@ -364,5 +376,8 @@ async def q__any__f_check_amount(query: CallbackQuery):
     await _show_posts(msg, posts[shown:shown + 20])
 
     if shown + 20 < len(posts):
-        await msg.answer(_("Show more posts"), reply_markup=InlineKeyboardMarkup(1, [[InlineKeyboardButton(_("Показать еще"), callback_data=f'f/pagination/{shown + 20}')]]))
-
+        await msg.answer(__("Show {posts_len} posts",
+                            "Show {posts_len} posts",
+                            ).format(posts_len=len(posts)),
+                         reply_markup=InlineKeyboardMarkup(1, [[InlineKeyboardButton(_("Показать еще"),
+                                                                                     callback_data=f'f/pagination/{shown + 20}')]]))

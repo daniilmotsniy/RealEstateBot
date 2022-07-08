@@ -60,5 +60,9 @@ async def get_wards(region_id: int) -> list[tuple[int, str]]:
     return [(x['id'], x['name']) for x in await _query('get_child_wards', parent_region=region_id)]
 
 
+async def get_sub_wards(ward_id: int) -> list[tuple[int, str]]:
+    return [(x['id'], x['name']) for x in await _query('get_child_subwards', parent_region=ward_id)]
+
+
 async def get_estate(**params: Union[str, int]) -> list[Any]:
     return await _query('objects_query_params', **params)

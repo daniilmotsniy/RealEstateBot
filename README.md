@@ -15,7 +15,7 @@
 Fill .env file, then
 use `docker-compose up` or `docker build .`
 
-## Deploy
+## Deploy (AWS)
 
  This workflow will build and push a new container image to Amazon ECR,
  and then will deploy a new task definition to Amazon ECS, when there is a push to the master branch.

@@ -44,7 +44,7 @@ class Post:
     def get_buttons(self) -> InlineKeyboardMarkup:
         write_btn = InlineKeyboardButton(_("Написать"), url=self.CONTACT_LINK)
         more_btn = InlineKeyboardButton(_("Подробнее"), url=self._link)
-        return InlineKeyboardMarkup().add(write_btn, more_btn)
+        return InlineKeyboardMarkup().row(write_btn).row(more_btn)
 
     def get_description(self) -> str:
         return f'{self._name}\n' + \
@@ -123,6 +123,7 @@ class PostsFiltration:
         rooms_from, rooms_to = self.count_rooms(rooms_counts)
         # City districts
         wards: typing.List[int] = criteria.get('wards')
+        sub_wards: typing.List[int] = criteria.get('sub_wards')
         price_min = criteria.get('amount_min')
         price_max = criteria.get('amount_max')
 
@@ -144,7 +145,10 @@ class PostsFiltration:
         for property_data in all_properties:
             property_id = property_data['id']
             district_id = return_first_item_if_exists(property_data, 'district', 'id')
+            sub_district_id = return_first_item_if_exists(property_data, 'sub_district', 'id')
             if district_id and not self.is_in_valid_districts(district_id, wards):
+                continue
+            if sub_district_id and not self.is_in_valid_districts(sub_district_id, sub_wards):
                 continue
             if skip_shown and property_id in shown_ids:
                 continue

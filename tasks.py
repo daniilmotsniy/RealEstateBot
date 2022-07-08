@@ -12,6 +12,8 @@ from db import aiogram_bucket
 from lang import i18n
 from post import PostsFiltration, Post
 
+_ = __ = i18n.gettext
+
 
 class PeriodicTask(ABC):
     DO_NOT_DISTURB_AFTER = 22
@@ -83,6 +85,8 @@ class PeriodicPostSpammer(PeriodicTask):
         posts: typing.List[Post] = await PostsFiltration(user_id).find_estate()
         for post in posts:
             with await post.get_photo_io() as photo:
+                await Bot.get_current().send_message(user_id, _("There is new post!"),
+                                                     disable_notification=do_not_disturb_mode)
                 await Bot.get_current().send_photo(user_id, photo, post.get_description(),
                                                    reply_markup=post.get_buttons(),
                                                    disable_notification=do_not_disturb_mode)

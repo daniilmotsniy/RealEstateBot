@@ -15,18 +15,33 @@ import post_filters
 logging.basicConfig(level=(logging.WARNING, logging.INFO, logging.DEBUG)[int(getenv('BOT_DEBUG') or 0)])
 
 _ = __ = i18n.gettext
-___ = i18n.lazy_gettext
+
+night_spam = """
+Сейчас уже поздно и для Вашего комфорта я буду отправлять варианты без звука. Доброй ночи! 😴 
+
+ახლა უკვე გვიანია , ამიტომ თქვენი კომფორტისთვის ყველა ახალ ვარიანტს გამოგიგზავნით დილით.ღამემშვიდობის.😴
+ 
+It's late now and for your comfort I'll send all the new options in the morning. Good night! 😴
+"""
+
+day_spam = """
+Нет подходящих вариантов? Попробуйте изменить критерии поиска.
+
+არ არის შესაფერისი ვარიანტები? სცადეთ შეცვალოთ თქვენი ძიების კრიტერიუმები.
+
+No suitable options? Try changing your search criteria.
+"""
 
 scheduler = Scheduler(
-    PeriodicDailyText(1, '22:00', ___('nightSpam')),
-    PeriodicDailyText(5, '18:00', ___('daySpam')),
+    PeriodicDailyText(1, '22:00', night_spam),
+    PeriodicDailyText(5, '14:00', day_spam),
     PeriodicPostSpammer(1),
 )
 
 
 @dp.message_handler(commands=['start'])
 async def h__start(msg: Message):
-    await msg.answer("Hi!\nI'm Avezor bot!", reply_markup=Keyboards.country_selection)
+    await msg.answer(f"🐼 Hi {msg.from_user.first_name}!\nI'm Avezor bot!", reply_markup=Keyboards.country_selection)
 
 
 @dp.message_handler(text=ButtonText.country_georgia)
@@ -57,7 +72,7 @@ async def h__any__lang_english(msg: Message):
 async def h__any__country_ukraine(msg: Message):
     await mem.update_bucket(user=msg.from_user.id, country='ua')
     await i18n.set_locale(msg.from_user, 'ru')
-    await msg.answer('Вы выбрали Украину.', reply_markup=Keyboards.start['ru'])
+    await msg.answer('Вы выбрали Украину 🇺🇦', reply_markup=Keyboards.start['ru'])
 
 
 @dp.message_handler(filters.Text(ButtonText.change_country.values()))
@@ -67,7 +82,7 @@ async def h__any__change_country(msg: Message):
 
 @dp.message_handler(filters.Text(ButtonText.add_object.values()))
 async def h__add_object(msg: Message):
-    await msg.answer(_('buttonReply_addObject'))
+    await msg.answer(_('{name} buttonReply_addObject').format(name=msg.from_user.first_name))
 
 
 @dp.message_handler(filters.Text(ButtonText.jobs.values()))
