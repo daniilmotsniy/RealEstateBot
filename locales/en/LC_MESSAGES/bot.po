@@ -28,39 +28,39 @@ msgstr "More"
 
 #: post.py:51
 msgid "post_Address"
-msgstr "Address"
+msgstr "📍 Address"
 
 #: post.py:52
 msgid "post_District"
-msgstr "District"
+msgstr "🗺 District"
 
 #: post.py:53
 msgid "post_City"
-msgstr "City"
+msgstr "🏙 City"
 
 #: post.py:54
 msgid "post_Region"
-msgstr "Region"
+msgstr "🌐 Region"
 
 #: post.py:55
 msgid "post_Area"
-msgstr "Area"
+msgstr "🛋 Area"
 
 #: post.py:56
 msgid "post_Rooms"
-msgstr "Rooms"
+msgstr "🛏 Rooms"
 
 #: post.py:57
 msgid "post_Floor"
-msgstr "Floor"
+msgstr "⬆ Floor"
 
 #: post.py:58
 msgid "post_Price"
-msgstr "Price"
+msgstr "💸 Price"
 
 #: post.py:59
 msgid "post_ID"
-msgstr "ID"
+msgstr "✅ ID"
 
 #: post_filters.py:23
 msgid "back"

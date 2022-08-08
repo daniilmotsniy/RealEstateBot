@@ -28,39 +28,39 @@ msgstr "დეტალურად"
 
 #: post.py:51
 msgid "post_Address"
-msgstr "მისამართი"
+msgstr "📍 მისამართი"
 
 #: post.py:52
 msgid "post_District"
-msgstr "ფართობი"
+msgstr "🗺 ფართობი"
 
 #: post.py:53
 msgid "post_City"
-msgstr "ქალაქი"
+msgstr "🏙 ქალაქი"
 
 #: post.py:54
 msgid "post_Region"
-msgstr "რეგიონი"
+msgstr "🌐 რეგიონი"
 
 #: post.py:55
 msgid "post_Area"
-msgstr "მოედანი"
+msgstr "🛋 მოედანი"
 
 #: post.py:56
 msgid "post_Rooms"
-msgstr "ოთახები"
+msgstr "🛏 ოთახები"
 
 #: post.py:57
 msgid "post_Floor"
-msgstr "სართული"
+msgstr "⬆ სართული"
 
 #: post.py:58
 msgid "post_Price"
-msgstr "ფასი"
+msgstr "💸 ფასი"
 
 #: post.py:59
 msgid "post_ID"
-msgstr "ID"
+msgstr "✅ ID"
 
 #: post_filters.py:23
 msgid "back"
