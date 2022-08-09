@@ -12,6 +12,9 @@ from tasks import Scheduler, PeriodicDailyText, PeriodicPostSpammer
 # noinspection PyUnresolvedReferences
 import post_filters
 
+# noinspection PyUnresolvedReferences
+import admin_filters
+
 logging.basicConfig(level=(logging.WARNING, logging.INFO, logging.DEBUG)[int(getenv('BOT_DEBUG') or 0)])
 
 _ = __ = i18n.gettext
@@ -42,6 +45,7 @@ scheduler = Scheduler(
 @dp.message_handler(commands=['start'])
 async def h__start(msg: Message):
     await msg.answer(f"🐼 Hi {msg.from_user.first_name}!\nI'm Avezor bot!", reply_markup=Keyboards.country_selection)
+    await mem.update_bucket(user=msg.from_user.id, username=msg.from_user.username)
 
 
 @dp.message_handler(text=ButtonText.country_georgia)
@@ -53,26 +57,49 @@ async def h__any__country_georgia(msg: Message):
 @dp.message_handler(text=ButtonText.lang_georgian)
 async def h__any__lang_georgian(msg: Message):
     await i18n.set_locale(msg.from_user, 'ka')
-    await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start['ka'])
+
+    bucket = await mem.get_bucket(user=msg.from_user.id)
+
+    if 'is_admin' not in bucket.keys() or not bucket['is_admin']:
+        await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start['ka'])
+    else:
+        await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start_admin['ka'])
 
 
 @dp.message_handler(text=ButtonText.lang_russian)
 async def h__any__lang_russian(msg: Message):
     await i18n.set_locale(msg.from_user, 'ru')
-    await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start['ru'])
+
+    bucket = await mem.get_bucket(user=msg.from_user.id)
+
+    if 'is_admin' not in bucket.keys() or not bucket['is_admin']:
+        await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start['ru'])
+    else:
+        await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start_admin['ru'])
 
 
 @dp.message_handler(text=ButtonText.lang_english)
 async def h__any__lang_english(msg: Message):
     await i18n.set_locale(msg.from_user, 'en')
-    await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start['en'])
+
+    bucket = await mem.get_bucket(user=msg.from_user.id)
+
+    if 'is_admin' not in bucket.keys() or not bucket['is_admin']:
+        await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start['en'])
+    else:
+        await msg.answer(_("Язык выбран"), reply_markup=Keyboards.start_admin['en'])
 
 
 @dp.message_handler(text=ButtonText.country_ukraine)
 async def h__any__country_ukraine(msg: Message):
     await mem.update_bucket(user=msg.from_user.id, country='ua')
     await i18n.set_locale(msg.from_user, 'ru')
-    await msg.answer('Вы выбрали Украину 🇺🇦', reply_markup=Keyboards.start['ru'])
+    bucket = await mem.get_bucket(user=msg.from_user.id)
+
+    if 'is_admin' not in bucket.keys() or not bucket['is_admin']:
+        await msg.answer('Вы выбрали Украину 🇺🇦', reply_markup=Keyboards.start['ru'])
+    else:
+        await msg.answer('Вы выбрали Украину 🇺🇦', reply_markup=Keyboards.start_admin['ru'])
 
 
 @dp.message_handler(filters.Text(ButtonText.change_country.values()))
