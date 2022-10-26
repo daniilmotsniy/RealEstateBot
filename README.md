@@ -1,4 +1,4 @@
-# Real estate notifier for "Avezor"
+# Real estate notifier
 
 ## Local setup
 
