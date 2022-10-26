@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AvezorBot 2.2\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-06-23 11:24+0300\n"
+"POT-Creation-Date: 2022-10-17 19:07+0300\n"
 "PO-Revision-Date: 2022-06-07 13:54+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
 "Language-Team: en <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.1\n"
+"Generated-By: Babel 2.10.3\n"
 
 #: post.py:45
 msgid "Написать"
@@ -78,127 +78,119 @@ msgstr "Select all"
 msgid "next"
 msgstr "Next"
 
-#: post_filters.py:59
-msgid "местной валюте"
-msgstr "local currency"
-
-#: post_filters.py:59
-msgid "долларах"
-msgstr "dollars"
-
-#: post_filters.py:65
+#: post_filters.py:61
 msgid "Выберите область:"
 msgstr "Choose an area:"
 
-#: post_filters.py:76
+#: post_filters.py:72
 msgid "Выберите город:"
 msgstr "Choose a city:"
 
-#: post_filters.py:82
+#: post_filters.py:78
 msgid "Что Вас интересует?"
 msgstr "What are you interested in? 🤔"
 
-#: post_filters.py:88
+#: post_filters.py:84
 msgid "Выберите категорию:"
 msgstr "Select a category:"
 
-#: post_filters.py:99
+#: post_filters.py:95
 msgid "Выберите тип объекта:"
 msgstr "Select object type:"
 
-#: post_filters.py:107
+#: post_filters.py:103
 msgid "Сколько должно быть комнат в квартире?"
 msgstr "How many rooms should there be in an apartment?"
 
-#: post_filters.py:122
+#: post_filters.py:123
 msgid "Выберите район:"
 msgstr "Choose an area:"
 
-#: post_filters.py:262
-msgid "Укажите ниже минимальную сумму в {currency}."
-msgstr "Enter the {currency} 💵 amount below ⬇ 100000000."
+#: post_filters.py:142
+msgid "Выберите микрорайон:"
+msgstr "Choose an sub district:"
 
-#: post_filters.py:275 post_filters.py:282
-msgid "Укажите ниже сумму в {currency} не более 100000000."
-msgstr "Enter the {currency} 💵 amount below ⬇ 100000000."
+#: post_filters.py:333 post_filters.py:386
+msgid "Укажите ниже минимальную сумму"
+msgstr "Enter the minimum amount in USD 💵."
 
-#: post_filters.py:284
+#: post_filters.py:345 post_filters.py:351
+msgid "Укажите ниже сумму не более 100 000 000."
+msgstr "Enter the amount below 100 000 000."
+
+#: post_filters.py:353
 msgid "она не должна быть меньше минимальной суммы"
-msgstr "it shouldn't be less then minimum amount of price"
+msgstr "It shouldn't be less than minimum amount"
 
-#: post_filters.py:299
-msgid "Указана сумма от {amount_min} до {amount_max} в {currency}."
-msgstr ""
-"You have entered an amount from {amount_min} to {amount_max} in "
-"{currency}."
+#: post_filters.py:367
+msgid "Указана сумма от {amount_min} до {amount_max}."
+msgstr "You have entered an amount from {amount_min} to {amount_max} USD."
 
-#: post_filters.py:303
+#: post_filters.py:370
 msgid "Изменить сумму"
-msgstr "change amount ♻"
+msgstr "Change amount ♻"
 
-#: post_filters.py:303
+#: post_filters.py:370
 msgid "Далее"
 msgstr "Next ⏩"
 
-#: post_filters.py:309
-msgid "Укажите ниже максимальную сумму в {currency}"
-msgstr "Enter the maximum {currency} 💵 amount ⬇"
+#: post_filters.py:373
+msgid "Укажите ниже максимальную сумму"
+msgstr "Enter the maximum amount in USD 💵."
 
-#: post_filters.py:311 run.py:95
+#: post_filters.py:375 run.py:128
 msgid "Something's wrong, I can feel it."
 msgstr "Something's wrong, I can feel it."
 
-#: post_filters.py:326
-msgid "Укажите ниже минимальную сумму в {currency}"
-msgstr "Enter the minimum {currency} 💵 amount below 100000000. ⬇"
-
-#: post_filters.py:345
+#: post_filters.py:405
 msgid "Вот, что я нашел по Вашему запросу."
-msgstr "Here is what I found on your request. ✅"
+msgstr "Here are what I have found on your request. ✅"
 
-#: post_filters.py:349
+#: post_filters.py:409
 msgid "I have found {posts_len} post! Wait, I am sending..."
 msgid_plural "I have found {posts_len} posts! Wait, I am sending..."
 msgstr[0] "I have found {posts_len} posts! Wait, I am sending..."
 msgstr[1] "I have found {posts_len} posts! Wait, I am sending..."
 
-#: post_filters.py:352
+#: post_filters.py:412
 msgid "I have not found any posts. Try later or use different filters."
 msgstr ""
 "I did not find any option 🤷‍♂. Try expanding your search criteria using "
 "the menu buttons. For example, increase your budget or select more "
 "districts. ⬇"
 
-#: post_filters.py:357 post_filters.py:378
+#: post_filters.py:417 post_filters.py:438
 msgid "Show {posts_len} posts"
 msgid_plural "Show {posts_len} posts"
 msgstr[0] "I have {posts_len}  more objects for you. Would you like to see? 👀"
 msgstr[1] "I have {posts_len}  more objects for you. Would you like to see? 👀"
 
-#: post_filters.py:361 post_filters.py:381
+#: post_filters.py:421 post_filters.py:441
 msgid "Показать еще"
 msgstr "Show more"
 
-#: run.py:50
+#: run.py:55
 msgid "Выберите язык"
 msgstr "Choose language"
 
-#: run.py:56 run.py:62 run.py:68
+#: run.py:65 run.py:67 run.py:77 run.py:79 run.py:89 run.py:91
 msgid "Язык выбран"
 msgstr "Language is chosen"
 
-#: run.py:85
+#: run.py:118
 msgid "{name} buttonReply_addObject"
 msgstr ""
-"💬 {name}, you can add a free ad for the sale of real estate on our "
-"website. To do this, you need to follow the link. https://avezor.ge, if "
-"you do not have an account: enter your name, email, and phone number, "
-"registration takes less than a minute, if you already have an account on "
-"our site, Just log in to the system and add objects."
+"{name}, you can add a free ad for the sale or rental of real estate on "
+"our website.\n"
+"To do this, you need to follow the link - https://avezor.ge/en/.\n"
+"If you do not have an account: enter your name, email, and phone number. "
+"Registration takes less than a minute.\n"
+"If you already have an account on our site, just log in to the system and"
+" add your objects."
 
-#: run.py:90
+#: run.py:123
 msgid "buttonReply_jobs"
-msgstr "All available vacancy is https://avezor.ge/vakansii/"
+msgstr "All available vacancies can be found here https://avezor.ge/en/vacancies/"
 
 #: tasks.py:88
 msgid "There is new post!"

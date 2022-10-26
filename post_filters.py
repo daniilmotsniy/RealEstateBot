@@ -20,7 +20,7 @@ def create_dynamic_inline_keyboard(values: Sequence[tuple[Union[str, int], Union
     length = len(values)
 
     if back:
-        values = itertools.chain(values, [('back', _('back'))])
+        values = itertools.chain([('back', _('back'))], values)
 
         length += 1
 
@@ -55,11 +55,6 @@ async def _edit(query: CallbackQuery, text: str, reply_markup: InlineKeyboardMar
     await query.message.edit_text(text, reply_markup=reply_markup)
 
 
-def _get_currency(bucket: dict) -> str:
-    # TODO fix hardcode
-    return _("местной валюте") if bucket['action'] in {180, 538, 760} else _("долларах")
-
-
 async def p__area():
     areas = await newapi.get_areas()
 
@@ -83,19 +78,34 @@ async def p__actions():
     return _dict(_("Что Вас интересует?"), actions, 'f/actions', back=True)
 
 
-async def p__post_type():
+async def p__post_type(action: int = None):
     cat_types = await newapi.get_nl_types()
+
+    if action is None:
+        bucket = await mem.get_bucket(user=User.get_current().id)
+
+        action = bucket['action']
+
+    # TODO fix hardcode
+    if action in {180, 540, 760}:  # if rentals
+        cat_types = [(i, s) for i, s in cat_types if i not in {1188, 274, 1187, 732, 1186, 733}]
 
     return _dict(_("Выберите категорию:"), cat_types, 'f/postType', back=True)
 
 
 async def p__prop_type(slug: int = None):
-    if slug is None:
-        bucket = await mem.get_bucket(user=User.get_current().id)
+    bucket = await mem.get_bucket(user=User.get_current().id)
 
+    if slug is None:
         slug = bucket['post_type']
 
+    action = bucket['action']
+
     types = await newapi.get_nl_types(slug)
+
+    # TODO fix hardcode
+    if action in {180, 540, 760}:  # if rentals
+        types = [(i, s) for i, s in types if i not in {301, 315, 294, 721, 737, 741, 720, 738, 739}]
 
     return _dict(_("Выберите тип объекта:"), types, 'f/propType', back=True)
 
@@ -116,12 +126,36 @@ async def p__wards(region_id: int = None):
     if region_id is None:
         region_id = bucket['region']
 
-    cat_types = await newapi.get_wards(region_id)
+    wards = bucket.get('_all_wards')
 
-    wards = bucket.get('wards', [])
+    if wards is None:
+        wards = await newapi.get_wards(region_id)
+
+        await mem.update_bucket(user=User.get_current().id, _all_wards=wards)
+
+    selected_wards = bucket.get('wards', [])
 
     return dict(text=_("Выберите район:"), reply_markup=create_multiple_choice_keyboard(
-        cat_types, wards, 2, 'f/ward', allow_nothing=False, select_all=True, back=True))
+        wards, selected_wards, 2, 'f/ward', allow_nothing=False, select_all=True, back=True))
+
+
+async def p__sub_wards(ward_id: int):
+    bucket = await mem.get_bucket(user=User.get_current().id)
+
+    sub_wards = bucket.get('_all_sub_wards')
+
+    if sub_wards is None:
+        sub_wards = await newapi.get_sub_wards(ward_id)
+
+        await mem.update_bucket(user=User.get_current().id, _all_sub_wards=sub_wards)
+
+    if not sub_wards:
+        return None
+
+    selected_sub_wards = bucket.get('sub_wards', [])
+
+    return dict(text=_("Выберите микрорайон:"), reply_markup=create_multiple_choice_keyboard(
+        sub_wards, selected_sub_wards, 2, 'f/sub_ward', allow_nothing=False, select_all=True, back=True))
 
 
 @dp.message_handler(aiogram.filters.Text(ButtonText.change_cohort.values()))
@@ -141,8 +175,20 @@ async def q__back(query: CallbackQuery):
         await _edit(query, **await p__region())
     elif slug == 'postType':
         await _edit(query, **await p__actions())
-    elif slug in {'propType', 'roomCounts', 'ward'}:
+    elif slug == 'propType' or slug == 'roomCounts':
         await _edit(query, **await p__post_type())
+    if slug == 'ward':
+        bucket = await mem.get_bucket(user=query.from_user.id)
+        bucket.pop('_all_wards', None)
+        await mem.set_bucket(user=query.from_user.id, bucket=bucket)
+
+        await _edit(query, **await p__post_type())
+    elif slug == 'sub_ward':
+        bucket = await mem.get_bucket(user=query.from_user.id)
+        bucket.pop('_all_sub_wards', None)
+        await mem.set_bucket(user=query.from_user.id, bucket=bucket)
+
+        await _edit(query, **await p__wards())
     elif slug == 'checkAmount':
         await _edit(query, **await p__wards())
     else:
@@ -173,7 +219,7 @@ async def q__any__f_actions(query: CallbackQuery):
 
     await mem.update_bucket(user=query.from_user.id, action=action_id)
 
-    await _edit(query, **await p__post_type())
+    await _edit(query, **await p__post_type(action_id))
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith('f/postType/'))
@@ -232,13 +278,28 @@ async def q__any__f_room_counts(query: CallbackQuery):
 async def q__any__f_ward(query: CallbackQuery):
     slug = query.data.removeprefix('f/ward/')
 
+    bucket = await mem.get_bucket(user=query.from_user.id)
+
     if slug == 'next':
+        bucket.pop('_all_wards', None)
+        await mem.set_bucket(user=query.from_user.id, bucket=bucket)
+
+        if bucket['country'] == 'ge':
+            wards = bucket.get('wards', ())
+
+            if len(wards) == 1:
+                sub_wards = await p__sub_wards(wards[0])
+
+                if sub_wards is not None:
+                    await _edit(query, **sub_wards)
+                    return
+
+        await mem.update_bucket(user=query.from_user.id, sub_wards=[])
+
         await _query_amount(query)
         return
 
-    bucket = await mem.get_bucket(user=query.from_user.id)
-
-    all_ward_ids = [k for k, v in await newapi.get_wards(bucket['region'])]
+    all_ward_ids = [k for k, v in bucket['_all_wards']]
 
     if slug == 'all':
         if set(bucket.get('wards', ())) == set(all_ward_ids):
@@ -253,17 +314,41 @@ async def q__any__f_ward(query: CallbackQuery):
     await _edit(query, **await p__wards(bucket['region']))
 
 
-async def _query_amount(query: CallbackQuery):
+@dp.callback_query_handler(lambda c: c.data.startswith('f/sub_ward/'))
+async def q__any__f_sub_ward(query: CallbackQuery):
+    slug = query.data.removeprefix('f/sub_ward/')
+
     bucket = await mem.get_bucket(user=query.from_user.id)
 
-    currency = _get_currency(bucket)
+    if slug == 'next':
+        bucket.pop('_all_sub_wards', None)
+        await mem.set_bucket(user=query.from_user.id, bucket=bucket)
 
+        await _query_amount(query)
+        return
+
+    all_sub_ward_ids = [k for k, v in bucket['_all_sub_wards']]
+
+    if slug == 'all':
+        if set(bucket.get('sub_wards', ())) == set(all_sub_ward_ids):
+            sub_wards = []
+        else:
+            sub_wards = all_sub_ward_ids
+    else:
+        sub_wards = list((set(bucket.get('sub_wards', ())) ^ {int(slug)}) & set(all_sub_ward_ids))
+
+    await mem.update_bucket(user=query.from_user.id, sub_wards=sub_wards)
+
+    await _edit(query, **await p__sub_wards(bucket['wards'][0]))
+
+
+async def _query_amount(query: CallbackQuery):
     await mem.update_bucket(user=query.from_user.id, amount_min=None, amount_max=None)
 
-    await query.message.edit_text(_("Укажите ниже минимальную сумму в {currency}.").format(currency=currency))
+    await query.message.edit_text(_("Укажите ниже минимальную сумму"))
 
 
-async def _try_to_set_amount(msg: Message) -> bool:
+async def _try_to_set_amount(msg: Message) -> Union[bool, None]:
     bucket = await mem.get_bucket(user=msg.from_user.id)
 
     amount = int(msg.text)
@@ -271,18 +356,19 @@ async def _try_to_set_amount(msg: Message) -> bool:
     if bucket.get('query_formed') is False:
         if 'amount_min' in bucket:
             if bucket['amount_min'] is None:
-                if amount > 100000000:
-                    currency = _get_currency(bucket)
-                    await msg.answer(_("Укажите ниже сумму в {currency} не более 100000000.").format(currency=currency))
+                if amount > 100_000_000:
+                    await msg.answer(_("Укажите ниже сумму не более 100 000 000."))
+                    return
                 else:
                     await mem.update_bucket(user=msg.from_user.id, amount_min=amount)
                     return False
             if bucket['amount_max'] is None:
-                if amount > 100000000:
-                    currency = _get_currency(bucket)
-                    await msg.answer(_("Укажите ниже сумму в {currency} не более 100000000.").format(currency=currency))
+                if amount > 100_000_000:
+                    await msg.answer(_("Укажите ниже сумму не более 100 000 000."))
+                    return
                 elif amount < bucket['amount_min']:
                     await msg.answer(_("она не должна быть меньше минимальной суммы"))
+                    return False
                 else:
                     await mem.update_bucket(user=msg.from_user.id, amount_max=amount)
                     return True
@@ -293,21 +379,21 @@ async def _try_to_set_amount(msg: Message) -> bool:
 @dp.message_handler(regexp='^[0-9]+$')
 async def h__any__amount(msg: Message):
     try:
-        if await _try_to_set_amount(msg):
+        both_entered = await _try_to_set_amount(msg)
+
+        if both_entered is None:
+            return
+
+        if both_entered:
             bucket = await mem.get_bucket(user=msg.from_user.id)
 
-            currency = _get_currency(bucket)
-            await msg.answer(_("Указана сумма от {amount_min} до {amount_max} в {currency}.").format(
-                amount_min=bucket['amount_min'], amount_max=bucket['amount_max'],
-                currency=currency
+            await msg.answer(_("Указана сумма от {amount_min} до {amount_max}.").format(
+                amount_min=bucket['amount_min'], amount_max=bucket['amount_max']
             ), reply_markup=create_dynamic_inline_keyboard(
                 (('edit', _("Изменить сумму")), ('next', _("Далее"))), 2, 'f/checkAmount', back=True)
             )
         else:
-            bucket = await mem.get_bucket(user=msg.from_user.id)
-
-            currency = _get_currency(bucket)
-            await msg.answer(_("Укажите ниже максимальную сумму в {currency}").format(currency=currency))
+            await msg.answer(_("Укажите ниже максимальную сумму"))
     except ValueError:
         await msg.answer(_("Something's wrong, I can feel it."))
 
@@ -319,12 +405,8 @@ async def q__any__f_check_amount(query: CallbackQuery):
     slug = query.data.removeprefix('f/checkAmount/')
 
     if slug == 'edit':
-        bucket = await mem.get_bucket(user=query.from_user.id)
-
-        currency = _get_currency(bucket)
-
         await mem.update_bucket(user=query.from_user.id, amount_min=None, amount_max=None)
-        await query.message.edit_text(_("Укажите ниже минимальную сумму в {currency}").format(currency=currency))
+        await query.message.edit_text(_("Укажите ниже минимальную сумму"))
     elif slug == 'next':
         await mem.update_bucket(user=query.from_user.id, query_formed=True)
 

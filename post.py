@@ -25,7 +25,7 @@ class Post:
     this class converts estate property by given WP API to telegram post
     """
 
-    CONTACT_LINK = 'https://t.me/avezor'
+    CONTACT_LINK = 'https://t.me/avezor_georgia'
 
     def __init__(self, property_data: dict):
         self._post_id = property_data.get('id')
@@ -66,7 +66,7 @@ class Post:
         telegram_max_dimensions = 10_000
 
         try:
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
                 async with session.get(photo_data_link) as resp:
                     buffer1 = io.BytesIO(await resp.read())
 
@@ -111,7 +111,6 @@ class PostsFiltration:
         if not criteria.get('query_formed', False):
             return []
 
-        locale = criteria.get('locale')
         city = criteria.get('region')
         # Rent/Sale
         deal_type = criteria.get('action')
@@ -130,7 +129,6 @@ class PostsFiltration:
         shown_ids = criteria.get('shown_ids') or list()
         all_properties = await get_estate(
             user_id=self._user_id,
-            lang=locale,
             deal_type=deal_type,
             city=city,
             estate_type=estate_type,
